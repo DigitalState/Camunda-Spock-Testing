@@ -1,0 +1,81 @@
+loadLogFile([{
+    "package": "CamundaHelloWorld1Spec",
+    "name": "Camunda Test Process Example",
+    "start": 1513789423953,
+    "narrative": "As a user of Camunda\nI want to run a basic test of the engine\nto see if the engine will function with Spock Testing",
+    "tags": [
+        {
+            "name": "FOO-1",
+            "key": "issue",
+            "value": "FOO-1",
+            "url": "http:\/\/my.issues.org\/FOO-1"
+        }
+    ],
+    "features": [
+        {
+            "name": "Test testProcess.bpmn",
+            "start": 1513789423956,
+            "errorOutput": [
+                "Dec 20, 2017 12:03:44 PM org.springframework.beans.factory.xml.XmlBeanDefinitionReader loadBeanDefinitions\nINFO: Loading XML bean definitions from class path resource [camunda_config\/camunda.cfg.xml]\n",
+                "Dec 20, 2017 12:03:45 PM org.slf4j.impl.JCLLoggerAdapter info\nINFO: ENGINE-12003 Plugin 'ConnectProcessEnginePlugin' activated on process engine 'default'\n",
+                "Dec 20, 2017 12:03:46 PM org.slf4j.impl.JCLLoggerAdapter info\nINFO: CNCT-01004 Discovered provider for connector id 'http-connector' and class 'org.camunda.connect.httpclient.impl.HttpConnectorImpl': 'org.camunda.connect.httpclient.impl.HttpConnectorProviderImpl'\n",
+                "Dec 20, 2017 12:03:46 PM org.slf4j.impl.JCLLoggerAdapter info\nINFO: CNCT-01004 Discovered provider for connector id 'soap-http-connector' and class 'org.camunda.connect.httpclient.soap.impl.SoapHttpConnectorImpl': 'org.camunda.connect.httpclient.soap.impl.SoapHttpConnectorProviderImpl'\n",
+                "Dec 20, 2017 12:03:46 PM org.slf4j.impl.JCLLoggerAdapter info\nINFO: ENGINE-12003 Plugin 'SpinProcessEnginePlugin' activated on process engine 'default'\n",
+                "Dec 20, 2017 12:03:46 PM org.slf4j.impl.JCLLoggerAdapter info\nINFO: SPIN-01010 Discovered Spin data format provider: org.camunda.spin.impl.json.jackson.format.JacksonJsonDataFormatProvider[name = application\/json]\n",
+                "Dec 20, 2017 12:03:46 PM org.slf4j.impl.JCLLoggerAdapter info\nINFO: SPIN-01010 Discovered Spin data format provider: org.camunda.spin.impl.xml.dom.format.DomXmlDataFormatProvider[name = application\/xml]\n",
+                "Dec 20, 2017 12:03:46 PM org.slf4j.impl.JCLLoggerAdapter info\nINFO: SPIN-01009 Discovered Spin data format: org.camunda.spin.impl.xml.dom.format.DomXmlDataFormat[name = application\/xml]\n",
+                "Dec 20, 2017 12:03:46 PM org.slf4j.impl.JCLLoggerAdapter info\nINFO: SPIN-01009 Discovered Spin data format: org.camunda.spin.impl.json.jackson.format.JacksonJsonDataFormat[name = application\/json]\n",
+                "Dec 20, 2017 12:03:52 PM org.slf4j.impl.JCLLoggerAdapter info\nINFO: ENGINE-03016 Performing database operation 'create' on component 'engine' with resource 'org\/camunda\/bpm\/engine\/db\/create\/activiti.h2.create.engine.sql'\n",
+                "Dec 20, 2017 12:03:52 PM org.slf4j.impl.JCLLoggerAdapter info\nINFO: ENGINE-03016 Performing database operation 'create' on component 'history' with resource 'org\/camunda\/bpm\/engine\/db\/create\/activiti.h2.create.history.sql'\n",
+                "Dec 20, 2017 12:03:52 PM org.slf4j.impl.JCLLoggerAdapter info\nINFO: ENGINE-03016 Performing database operation 'create' on component 'identity' with resource 'org\/camunda\/bpm\/engine\/db\/create\/activiti.h2.create.identity.sql'\n",
+                "Dec 20, 2017 12:03:52 PM org.slf4j.impl.JCLLoggerAdapter info\nINFO: ENGINE-03016 Performing database operation 'create' on component 'case.engine' with resource 'org\/camunda\/bpm\/engine\/db\/create\/activiti.h2.create.case.engine.sql'\n",
+                "Dec 20, 2017 12:03:52 PM org.slf4j.impl.JCLLoggerAdapter info\nINFO: ENGINE-03016 Performing database operation 'create' on component 'case.history' with resource 'org\/camunda\/bpm\/engine\/db\/create\/activiti.h2.create.case.history.sql'\n",
+                "Dec 20, 2017 12:03:52 PM org.slf4j.impl.JCLLoggerAdapter info\nINFO: ENGINE-03016 Performing database operation 'create' on component 'decision.engine' with resource 'org\/camunda\/bpm\/engine\/db\/create\/activiti.h2.create.decision.engine.sql'\n",
+                "Dec 20, 2017 12:03:52 PM org.slf4j.impl.JCLLoggerAdapter info\nINFO: ENGINE-03016 Performing database operation 'create' on component 'decision.history' with resource 'org\/camunda\/bpm\/engine\/db\/create\/activiti.h2.create.decision.history.sql'\n",
+                "Dec 20, 2017 12:03:53 PM org.slf4j.impl.JCLLoggerAdapter info\nINFO: ENGINE-03067 No history level property found in database\n",
+                "Dec 20, 2017 12:03:53 PM org.slf4j.impl.JCLLoggerAdapter info\nINFO: ENGINE-03065 Creating historyLevel property in database for level: HistoryLevelFull(name=full, id=3)\n",
+                "Dec 20, 2017 12:03:53 PM org.slf4j.impl.JCLLoggerAdapter info\nINFO: ENGINE-00001 Process Engine default created.\n"
+            ],
+            "output": [
+                "Starting Process Instance\n",
+                "testProcess:1:3\n",
+                "Process is active\n",
+                "only 1 instance is running\n",
+                "there is a active task\n",
+                "We complete the task\n",
+                "The process has ended\n"
+            ],
+            "end": 1513789438919,
+            "result": "passed",
+            "attachments": [
+                
+            ]
+        }
+    ],
+    "end": 1513789438921,
+    "result": "passed",
+    "attachments": [
+        {
+            "name": "http:\/\/forum.camunda.org",
+            "url": "http:\/\/forum.camunda.org"
+        }
+    ]
+}])
+
+loadLogFile([{
+    "package": "CamundaHelloWorld2Spec",
+    "name": "Camunda Test Process Example",
+    "start": 1513789438944,
+    "end": 1513789438944,
+    "result": "skipped",
+    "narrative": "As a user of Camunda\nI want to run a basic test of the engine\nto see if the engine will function with Spock Testing",
+    "tags": [
+        {
+            "name": "FOO-1",
+            "key": "issue",
+            "value": "FOO-1",
+            "url": "http:\/\/my.issues.org\/FOO-1"
+        }
+    ]
+}])
+
