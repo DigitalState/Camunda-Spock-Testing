@@ -167,5 +167,17 @@
       <version>${version.h2}</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.github.tomjankes</groupId>
+      <artifactId>wiremock-groovy</artifactId>
+      <version>0.2.0</version>
+    </dependency>
+
+    <dependency>
+        <groupId>com.github.tomakehurst</groupId>
+        <artifactId>wiremock</artifactId>
+        <version>2.12.0</version>
+    </dependency>
+
   </dependencies>
 </project>
