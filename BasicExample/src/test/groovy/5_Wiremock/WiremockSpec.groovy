@@ -32,17 +32,17 @@ class WiremockSpec extends Specification {
   def "WireMock Test"() {
     given: _ "Web Server is running"
       wireMockGroovy.stub {
-          request {
-              method "GET"
-              url "/some/thing"
+        request {
+          method "GET"
+          url "/some/thing"
+        }
+        response {
+          status 200
+          body "Some body"
+          headers {
+            "Content-Type" "text/plain"
           }
-          response {
-              status 200
-              body "Some body"
-              headers {
-                  "Content-Type" "text/plain"
-              }
-          }
+        }
       }
 
     when:_ "Starting Process Instance"
@@ -60,7 +60,6 @@ class WiremockSpec extends Specification {
       println varValues.sort().toString()
       def desiredValue = ['ws_response':'Some body', '_env':'unit-test']
       
-      assertThat(processInstance).hasVariables('ws_response')
       assert varValues.sort().toString() == desiredValue.sort().toString()
   }
 }

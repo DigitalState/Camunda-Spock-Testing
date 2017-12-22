@@ -18,11 +18,11 @@ execution.setVariable('someNumber', 1234)]]></bpmn:script>
       <bpmn:incoming>SequenceFlow_0j6q0d9</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_1n8s9b2" sourceRef="Task_1linceh" targetRef="Task_11aspuv" />
-    <bpmn:sequenceFlow id="SequenceFlow_0j6q0d9" sourceRef="Task_11aspuv" targetRef="EndEvent_0dmozpc" />
     <bpmn:userTask id="Task_11aspuv" name="placeholder">
       <bpmn:incoming>SequenceFlow_1n8s9b2</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0j6q0d9</bpmn:outgoing>
     </bpmn:userTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0j6q0d9" sourceRef="Task_11aspuv" targetRef="EndEvent_0dmozpc" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="myProcess">
@@ -52,19 +52,19 @@ execution.setVariable('someNumber', 1234)]]></bpmn:script>
         <di:waypoint xsi:type="dc:Point" x="279" y="120" />
         <di:waypoint xsi:type="dc:Point" x="334" y="120" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="261.5" y="98.5" width="90" height="13" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0j6q0d9_di" bpmnElement="SequenceFlow_0j6q0d9">
-        <di:waypoint xsi:type="dc:Point" x="434" y="120" />
-        <di:waypoint xsi:type="dc:Point" x="541" y="120" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="487.5" y="98.5" width="0" height="13" />
+          <dc:Bounds x="262" y="99" width="90" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="UserTask_0g6qt7r_di" bpmnElement="Task_11aspuv">
         <dc:Bounds x="334" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0j6q0d9_di" bpmnElement="SequenceFlow_0j6q0d9">
+        <di:waypoint xsi:type="dc:Point" x="434" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="541" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="443" y="99" width="90" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
