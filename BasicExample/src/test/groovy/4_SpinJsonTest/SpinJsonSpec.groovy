@@ -20,7 +20,6 @@ import static org.hamcrest.Matchers.hasProperty;
 import groovy.json.JsonSlurper;
 import groovy.json.JsonOutput;
 
-
 @Narrative("""
 Testing the validation of SPIN JSON objects in the BPMN
 against the test SPIN JSON objected created in this spec
@@ -129,8 +128,7 @@ class SpinJsonSpec extends Specification {
       // always convert to string at the end for final comparison.
       // Groovy, Maps, and SPIN dont seem to like each other for comparison
       // String also provides better error reporting with difference calculation
-      // Sort to ensure that maps are the same
+      // Sort to ensure that maps are the same order, because we use string keys in our map (https://stackoverflow.com/a/5360502)
       assert varValues.sort().toString() == desiredResult2.sort().toString()
-
   }
 }
