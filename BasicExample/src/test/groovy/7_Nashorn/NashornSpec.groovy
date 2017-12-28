@@ -1,6 +1,6 @@
-import org.camunda.bpm.engine.runtime.ProcessInstance
-import org.camunda.bpm.engine.test.Deployment
-import org.camunda.bpm.engine.test.ProcessEngineRule
+// import org.camunda.bpm.engine.runtime.ProcessInstance
+// import org.camunda.bpm.engine.test.Deployment
+// import org.camunda.bpm.engine.test.ProcessEngineRule
 
 //brings in Camunda BPM Assertion + AssertJ core.api.Assertions
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*
@@ -11,11 +11,11 @@ import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*
 // Used for the Spock Mock of the 'execution' variable in the script
 import org.camunda.bpm.engine.delegate.DelegateExecution
 
-import org.junit.Rule
+// import org.junit.Rule
 
 import spock.lang.*
 
-import static org.camunda.spin.Spin.*
+// import static org.camunda.spin.Spin.*
 
 
 import javax.script.ScriptEngine
