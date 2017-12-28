@@ -8,10 +8,15 @@
 1. In Terminal, navigate to the root of the folder/project and run `mvn clean test`.
 1. Output will be created in the Terminal, and you can look at `./build-reports` folder for JSON reports on your tests.
 
+# Requirements
+
+1. Java 8
+1. Maven
+
 
 # Known Issues
 
-1. `@Deployment` can only be applied to `def` methods inside of the class.  As a result you cannot use Spock's `@Stepwise` feature to chain multiple `def` steps together for a single test/deployment.
+1. `@Deployment` can only be applied to `def` methods inside of the class.  As a result you cannot use Spock's `@Stepwise` feature to chain multiple `def` steps together for a single test/deployment.  Still Researching other ways to implement
 
 
 # Business-centric Features:
@@ -90,3 +95,8 @@ class CamundaHelloWorld1Spec extends Specification {
 - .gsh
 
 Each extension is equivalent
+
+
+# Notes about Spock
+
+1. Splitting up a `then:` block with `and:` does not impose any ordering, as `and:` is only meant for documentation purposes and doesn’t carry any semantics.
