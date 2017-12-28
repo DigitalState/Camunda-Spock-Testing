@@ -31,7 +31,11 @@ Camunda Delegate Execution Interface (execution variable in scripts):
 Spock Docs on Interaction Testing:
 >http://spockframework.org/spock/docs/1.0/interaction_based_testing.html
 
-# Generation notes
+
+Variables to Mock and their required classes/interfaces:
+>https://docs.camunda.org/manual/7.8/user-guide/process-engine/scripting/#variables-available-during-script-execution
+
+# General notes
 
 1. Quote from Spck Docs:
    > Stubbing is the act of making collaborators respond to method calls in a certain way. When stubbing a method, you don’t care if and how many times the method is going to be called; you just want it to return some value, or perform some side effect, whenever it gets called.

@@ -80,3 +80,13 @@ class CamundaHelloWorld1Spec extends Specification {
   }
 }
 ```
+
+
+# Supported Groovy File Extensions:
+
+- .groovy
+- .gvy
+- .gy
+- .gsh
+
+Each extension is equivalent
