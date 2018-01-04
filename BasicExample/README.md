@@ -16,7 +16,7 @@
 
 # Known Issues
 
-1. `@Deployment` can only be applied to `def` methods inside of the class.  As a result you cannot use Spock's `@Stepwise` feature to chain multiple `def` steps together for a single test/deployment.  Still Researching other ways to implement
+1.<s> `@Deployment` can only be applied to `def` methods inside of the class.  As a result you cannot use Spock's `@Stepwise` feature to chain multiple `def` steps together for a single test/deployment.  Still Researching other ways to implement</s>  This has been resolved with used the @ClassRule annotation.  See the [stepwise example](https://github.com/DigitalState/Camunda-Spock-Testing/blob/master/BasicExample/src/test/groovy/8_Stepwise/StepwiseSpec.groovy)
 
 
 # Business-centric Features:
@@ -100,3 +100,4 @@ Each extension is equivalent
 # Notes about Spock
 
 1. Splitting up a `then:` block with `and:` does not impose any ordering, as `and:` is only meant for documentation purposes and doesn’t carry any semantics.
+1. Spock does not provide auto-support for deep stubs/mocks, meaning that when method chaining is used in scripts.  See the [End-to-End start_event.js unit test](https://github.com/DigitalState/Camunda-Spock-Testing/blob/master/End-to-End/src/test/groovy/end-to-end/EndToEndNashornSpec.groovy#L188-L199) example for how to manage method chain Mocks/Stubs.
