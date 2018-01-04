@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.11.2">
+  <bpmn:process id="stepwise" name="Stepwise" isExecutable="true" camunda:versionTag="v0.1">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>SequenceFlow_0yt9iy1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0yt9iy1" sourceRef="StartEvent_1" targetRef="Task_1linceh" />
+    <bpmn:endEvent id="EndEvent_0dmozpc">
+      <bpmn:incoming>SequenceFlow_1n8s9b2</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1n8s9b2" sourceRef="Task_1linceh" targetRef="EndEvent_0dmozpc" />
+    <bpmn:serviceTask id="Task_1linceh" name="HTTP Call">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">
+              <camunda:script scriptFormat="javascript"><![CDATA[function buildUrl(env)
+{
+  var path = '/some/thing'
+  
+  switch (env) {
+    case 'unit-test':
+      return 'http://localhost:8081' + path
+
+    case 'test':
+      return 'http://some.test.env.url' + path
+
+    default:
+      throw 'Cannot build URL - No valid env was given'
+  }
+}
+
+var env = execution.getVariable('_env')
+buildUrl(env)]]></camunda:script>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map />
+            </camunda:inputParameter>
+            <camunda:outputParameter name="ws_response">${response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0yt9iy1</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1n8s9b2</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="stepwise">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="68" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="41" y="138" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0yt9iy1_di" bpmnElement="SequenceFlow_0yt9iy1">
+        <di:waypoint xsi:type="dc:Point" x="104" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="179" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="96.5" y="98.5" width="90" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0dmozpc_di" bpmnElement="EndEvent_0dmozpc">
+        <dc:Bounds x="379" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="352" y="141" width="90" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1n8s9b2_di" bpmnElement="SequenceFlow_1n8s9b2">
+        <di:waypoint xsi:type="dc:Point" x="279" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="379" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="284" y="98.5" width="90" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1foa199_di" bpmnElement="Task_1linceh">
+        <dc:Bounds x="179" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
