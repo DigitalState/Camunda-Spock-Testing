@@ -1,0 +1,8 @@
+{
+  "script_paths": {
+    "script1": "deployment://script1.js",
+    "script2": "deployment://script2.js",
+    "start_event": "deployment://start_event.js",
+    "gateway_decision": "deployment://gateway_decision.js"
+  }
+}
