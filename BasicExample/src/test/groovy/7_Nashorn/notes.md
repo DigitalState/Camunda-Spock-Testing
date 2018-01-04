@@ -13,7 +13,7 @@ Spock and Nashorn Inspiration:
 
 >http://eshepelyuk.github.io/2014/11/26/-testing-jvm-javascript-jasmine-spock-nashorn.html
 
-Java X Script Engine Manager:
+Javax Script Engine Manager:
 >https://docs.oracle.com/javase/7/docs/api/javax/script/ScriptEngineManager.html
 
 Java Script Engine:

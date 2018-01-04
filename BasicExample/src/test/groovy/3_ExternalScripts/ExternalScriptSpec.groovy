@@ -35,7 +35,9 @@ class ExternalScriptSpec extends Specification {
   public ProcessEngineRule processEngineRule = new ProcessEngineRule('camunda_config/camunda.cfg.xml');
 
   @Issue('https://forum.camunda.org/t/unit-testing-external-scripts-deployment-file-js-cannot-find-resource-at-path/5661')
-  @Deployment(resources = ["bpmn/3_ExternalScriptTest/myProcess.bpmn", "bpmn/3_ExternalScriptTest/file.js" ])
+  @Deployment(resources = [ "bpmn/3_ExternalScriptTest/myProcess.bpmn", 
+                            "bpmn/3_ExternalScriptTest/file.js"
+                            ])
   def "External Script Test"() {
     when:_ 'Starting Process Instance'
 
