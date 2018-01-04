@@ -34,9 +34,6 @@ class StepwiseSpec extends Specification {
   @Rule
   WireMockRule wireMockRule = new WireMockRule(wmPort)
   
-  def wireMockGroovy = new WireMockGroovy(wmPort)
-
-
   // helper method to shorten the .addInputStream params in createDeploment()
   def resourceStream(path){
     return this.class.getResource(path.toString()).newInputStream()
@@ -56,6 +53,7 @@ class StepwiseSpec extends Specification {
 
   def "WireMock Test 1"() {
     given: _ "Web Server is running for Test 1"
+      def wireMockGroovy = new WireMockGroovy(wmPort)
       wireMockGroovy.stub {
         request {
           method "GET"
@@ -90,6 +88,7 @@ class StepwiseSpec extends Specification {
 
   def "WireMock Test 2"() {
     given: _ "Web Server is running Test 2"
+      def wireMockGroovy = new WireMockGroovy(wmPort)
       wireMockGroovy.stub {
         request {
           method "GET"
