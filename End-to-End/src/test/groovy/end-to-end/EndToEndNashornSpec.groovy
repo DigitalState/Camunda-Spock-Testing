@@ -38,7 +38,6 @@ class EndToEndNashornSpec extends Specification {
       // Generates a Spock Mock using the DelegateExecution interface from Camunda engine
       def execution = Mock(DelegateExecution)
       
-      // When a script uses .getVariable('dog') then return the value 'Frank'
       // See: http://spockframework.org/spock/docs/1.0/interaction_based_testing.html#_stubbing
       execution.getVariable('number') >> number_dataTable
 
@@ -88,7 +87,6 @@ class EndToEndNashornSpec extends Specification {
       // Generates a Spock Mock using the DelegateExecution interface from Camunda engine
       def execution = Mock(DelegateExecution)
       
-      // When a script uses .getVariable('dog') then return the value 'Frank'
       // See: http://spockframework.org/spock/docs/1.0/interaction_based_testing.html#_stubbing
       execution.setVariable('someVar', 'Some String Value') >> null
 
