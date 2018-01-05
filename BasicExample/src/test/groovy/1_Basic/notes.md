@@ -1,0 +1,3 @@
+# Notes
+
+ - The use of the `@Deployment` annotation is used in this example and some other examples in this repo purely for demonstration purposes.  See the End-to-End example for use of a Camunda DeploymentBuilder.  As of writing this (Jan 2017), the `@Deployment` annotation does not use resource names, and as such full class path names are required when using External Resources for script sources.  In the End-to-End example, a deployment with ResourceStreams are used which include the ability to set a resource name. (this is required because when a deployment occurs using the REST API, a resource name is used).
