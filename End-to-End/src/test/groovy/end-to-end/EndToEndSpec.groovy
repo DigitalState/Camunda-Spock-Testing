@@ -36,7 +36,7 @@ class EndToEndSpec extends Specification {
   
   @Shared ScriptEngine engine = new ScriptEngineManager().getEngineByName('nashorn')
   @Shared String deploymentId
-
+  @Shared String executionId
 
   // helper method to shorten the .addInputStream params in createDeploment()
   def resourceStream(path){
@@ -72,7 +72,7 @@ class EndToEndSpec extends Specification {
                                 'number': number_dataTable
                                 ]
       def processInstance = runtimeService().startProcessInstanceByKey("end-to-end", startingVariables)
-      def executionId = processInstance.getId()
+      executionId = processInstance.getId()
 
     then:_ 'Process is Active and waiting for user task completion'
       assertThat(processInstance).isActive()
