@@ -60,3 +60,18 @@ Finished at: 2018-01-07T15:19:57-05:00
 Final Memory: 16M/143M
 ------------------------------------------------------------------------
 ```
+
+# Spock Data Table Example
+
+See the [Spec](https://github.com/DigitalState/Camunda-Spock-Testing/blob/master/DMN/src/test/groovy/1_dmn_basic/DmnBasicSpec.groovy#L69) for specific use case example
+
+```groovy
+where:
+          systemName | personResponsible
+        'System 123' | 'Chris'
+          'System 1' | 'Chris'
+          'System 2' | 'Chris'
+          'System 3' | 'Chris'
+      'System Alpha' | 'Frank'
+  'Core System Beta' | 'Alison'
+```
