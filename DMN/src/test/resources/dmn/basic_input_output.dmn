@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/DMN/20151101/dmn.xsd" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="definitions_1u3u26e" name="Decision" namespace="http://camunda.org/schema/1.0/dmn">
+  <decision id="SystemResponsibility" name="Basic Input/Output">
+    <extensionElements>
+      <biodi:bounds x="434" y="212" width="180" height="80" />
+    </extensionElements>
+    <decisionTable>
+      <input id="InputClause_1t8t3tp" label="System Name" camunda:inputVariable="">
+        <inputExpression id="LiteralExpression_0s1tj2y" typeRef="string">
+          <text>systemName</text>
+        </inputExpression>
+      </input>
+      <output id="output_1" label="Person Responsible" name="personResponsible" typeRef="string" />
+      <rule id="row-427131255-1">
+        <inputEntry id="UnaryTests_11fshvz">
+          <text><![CDATA["System 123", "System 1", "System 2", "System 3"]]></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0e5hrbf">
+          <text><![CDATA["Chris"]]></text>
+        </outputEntry>
+      </rule>
+      <rule id="row-427131255-2">
+        <inputEntry id="UnaryTests_1gnjvwn">
+          <text><![CDATA["System Alpha"]]></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1mjuzxr">
+          <text><![CDATA["Frank"]]></text>
+        </outputEntry>
+      </rule>
+      <rule id="row-427131255-3">
+        <inputEntry id="UnaryTests_1auyg5g">
+          <text><![CDATA["Core System Beta"]]></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1a68nm3">
+          <text><![CDATA["Alison"]]></text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>
