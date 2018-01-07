@@ -1,6 +1,6 @@
-# DMN Unit Testing - Basic Example
+# DMN Unit Testing - Basic Example - Spock Framework
 
-This is a basic DMN Unit testing example that uses Spock Datatables
+This is a basic Camunda DMN Unit testing example that uses Spock Framework and Spock Data Tables
 
 See Spock spec at: `./src/test/groovy/1_dmn_basic/DmnBasicSpec.groovy`
 
