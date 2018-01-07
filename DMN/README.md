@@ -67,11 +67,11 @@ See the [Spec](https://github.com/DigitalState/Camunda-Spock-Testing/blob/master
 
 ```groovy
 where:
-          systemName | personResponsible
-        'System 123' | 'Chris'
-          'System 1' | 'Chris'
-          'System 2' | 'Chris'
-          'System 3' | 'Chris'
-      'System Alpha' | 'Frank'
-  'Core System Beta' | 'Alison'
+          systemName || personResponsible
+        'System 123' || 'Chris'
+          'System 1' || 'Chris'
+          'System 2' || 'Chris'
+          'System 3' || 'Chris'
+      'System Alpha' || 'Frank'
+  'Core System Beta' || 'Alison'
 ```
