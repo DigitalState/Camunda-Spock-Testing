@@ -20,9 +20,9 @@ import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
 
 
-@Title("Interactive Spec")
+@Title("Conditional Start Testing for Scripting with Camunda 7.9")
 
-class InteractiveSpec extends Specification {
+class ConditionalStartSpec extends Specification {
 
   // Use when you want to run the Camunda Engine
   @ClassRule
@@ -40,9 +40,10 @@ class InteractiveSpec extends Specification {
   def setupSpec(){
     // https://docs.camunda.org/javadoc/camunda-bpm-platform/7.8/org/camunda/bpm/engine/repository/DeploymentBuilder.html
     def deployment = repositoryService().createDeployment()
-                                        .addInputStream('end-to-end.bpmn', resourceStream('bpmn/interactive/interactive.bpmn'))
-                                        .addInputStream('script1.js', resourceStream('bpmn/interactive/script1.js'))
-                                        .name('myDeployment')
+                                        .addInputStream('end-to-end.bpmn', resourceStream('bpmn/ConditionalStart/conditionalStart.bpmn'))
+                                        .addInputStream('script1.js', resourceStream('bpmn/ConditionalStart/script1.js'))
+                                        .addInputStream('script2.js', resourceStream('bpmn/ConditionalStart/script2.js'))
+                                        .name('ConditionalStart')
                                         .enableDuplicateFiltering(false)
                                         .deploy()
 
@@ -56,14 +57,18 @@ class InteractiveSpec extends Specification {
       //@TODO Move variable creation and management into its own class.
       def json = S("{\"customer\": \"Kermit\"}")
       def startingVariables = [
-                                'json':json
+                                'json':json,
+                                'temp': 24
                                 ]
-      // Update the Process Key value
-      def processInstance = runtimeService().startProcessInstanceByKey("interactive", startingVariables)
-      executionId = processInstance.getId()
+      // we assume only one process instance will be returned
+      def processInstance = runtimeService().createConditionEvaluation()
+                                      .setVariables(startingVariables)
+                                      .evaluateStartConditions();
+
+      executionId = processInstance[0].getId()
 
     then:_ 'Process is Active and waiting for user task completion'
-      assertThat(processInstance).isActive()
+      assertThat(processInstance[0]).isActive()
       
       // processInstanceQuery() is being exposed as part of:
       // http://camunda.github.io/camunda-bpm-assert/apidocs/org/camunda/bpm/engine/test/assertions/ProcessEngineTests.html
