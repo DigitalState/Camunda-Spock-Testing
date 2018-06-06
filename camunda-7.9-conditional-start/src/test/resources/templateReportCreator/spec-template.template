@@ -1,0 +1,229 @@
+<%
+    def stats = utils.stats( data )
+ %>
+ <h1> Report for ${utils.getSpecClassName( data )}</h1>
+
+<h1>Summary</h1>
+
+* Total Runs: ${stats.totalRuns}<br>
+* Success Rate: ${fmt.toPercentage(stats.successRate)}<br>
+* Failures: ${stats.failures}<br>
+* Errors:   ${stats.errors}<br>
+* Skipped:  ${stats.skipped}<br>
+* Total time: ${fmt.toTimeDuration(stats.time)}<br>
+
+<%
+    def generateTitle = {
+    def specTitle = utils.specAnnotation( data, spock.lang.Title )?.value()
+      if ( specTitle ) {
+          specTitle.split('\n').each { out << '<h3>' << it << '</h3>' }
+      }
+      if ( data.info.narrative ) {
+          if ( specTitle ) { out << '\n' }
+          out << '<pre>\n' << data.info.narrative << '\n</pre>'
+      }
+    }
+    
+    def writeTagOrAttachment = { feature ->
+        def tagsByKey = feature.tags.groupBy( { t -> t.key } )
+        tagsByKey.each { key, values ->
+            out << '\n#### ' << key.capitalize() << 's:\n\n'
+            values.each { tag ->
+                out << '* ' << tag.url << '\n'
+            }
+        }
+        if ( feature.attachments.size > 0 ) {
+            out << '\n#### ' << 'See:' << '\n\n'
+            feature.attachments.each { value ->
+                out << '* ' << value.url << '\n'
+            } 
+        }
+    }
+    def writePendingFeature = { pendingFeature ->
+        if ( pendingFeature ) {
+            out << '\n> Pending Feature\n'
+        }
+    }
+    def writeHeaders = { headers ->
+        if ( headers ) {
+            headers.each { h ->
+                out << '> ' << h << '\n'
+            }
+        }
+    }
+    def writeExtraInfo = { extraInfo ->
+        if ( extraInfo ) {
+            extraInfo.each { info ->
+                out << '* ' << info << '\n'
+            }
+        }
+    }
+    writeHeaders( utils.specHeaders( data ) )
+    writeTagOrAttachment data.info
+%>
+
+
+<%
+//START OF REUSABLE CODE SECTION
+%>
+<%
+
+  def setupHead = {
+    def head = $/
+                <head>
+                <meta charset="utf-8">
+                <meta http-equiv="content-type" content="text/html; charset=utf-8">
+                <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+                <style>
+                  html, body, #diagram {
+                    height: 500px
+                  }
+                  
+                  .highlight:not(.djs-connection) .djs-visual > :nth-child(1) {
+                    fill: green !important; /* color elements as green */
+                  }
+                  .highlight-overlay {
+                    background-color: green; /* color elements as green */
+                    opacity: 0.4;
+                    pointer-events: none; /* no pointer events, allows clicking through onto the element */
+                  }
+
+                  pre code {
+                    background-color: #eee;
+                    border: 1px solid #999;
+                    display: block;
+                    padding: 20px;
+                  }
+                </style>
+              </head>
+              /$
+    out << head
+  }
+
+
+  def buildCoverage = { xml ->
+
+    def html = $/
+                <h3>Coverage Overview</h3>
+
+                  <div id="diagram"></div>
+
+                  <!-- viewer -->
+                  <script src="https://unpkg.com/bpmn-js@2.1.0/dist/bpmn-viewer.development.js"></script>
+
+                  <!-- jquery (required for example only) -->
+                  <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.js"></script>
+
+                  <!-- app -->
+                  <script>
+                    var viewer = new BpmnJS({
+                      container: '#diagram'
+                    });
+
+                    var diagramXML = '${xml.replaceAll("[\n\r]", "")}'
+
+                    function showDiagram() {
+                      viewer.importXML(diagramXML, function() {
+                        var overlays = viewer.get('overlays'),
+                            canvas = viewer.get('canvas'),
+                            elementRegistry = viewer.get('elementRegistry');
+                            canvas.zoom('fit-viewport');
+
+                        var shape = elementRegistry.get('Task_1vbilbk');
+                        var $$overlayHtml = $$('<div class="highlight-overlay">')
+                                                .css({
+                                                  width: shape.width,
+                                                  height: shape.height
+                                                });
+                        overlays.add('Task_1vbilbk', {
+                          position: {
+                            top: 0,
+                            left: 0
+                          },
+                          html: $$overlayHtml
+                        });
+                      });
+                    }
+                    // load + show diagram
+                    showDiagram();
+                  </script>
+                /$
+
+      out << html
+      }
+
+%>
+
+<%
+// END OF REUSABLE CODE SECTION
+%>
+
+<% setupHead() %>
+
+<h1>Spock Framework Tests: BPMN and Coverage</h1>
+
+<h2>Features</h2>
+
+<% generateTitle() %>
+
+<%
+  features.eachFeature { name, result, blocks, iterations, params ->
+%>
+
+<h3> $name </h3>
+
+<% 
+    if ( utils.isUnrolled( delegate ) ) {
+        buildCoverage( utils.nextSpecExtraInfo( data )[0]['bpmnModel'] )
+    } else {
+        (1..iterations.size()).each {
+            buildCoverage( utils.nextSpecExtraInfo( data )[0]['bpmnModel'] )
+        }
+    }
+  // }
+%>
+
+<h4>Feature Test Results:</h4>
+Result: **$result**
+
+<%
+  for ( block in blocks ) {
+ %>
+<h5> ${block.kind} ${block.text} </h5>
+<%
+          if ( block.sourceCode ) {
+              out << "<pre><code>"
+              block.sourceCode.each { codeLine ->
+                  out << codeLine << '<br>'
+              }
+              out << "</code></pre>"
+          }
+        }
+        def executedIterations = iterations.findAll { it.dataValues || it.errors }
+        if ( params && executedIterations ) {
+ %>
+ | ${params.join( ' | ' )} |
+ |${params.collect { ( '-' * ( it.size() + 2 ) ) + '|' }.join()}
+<%
+            for ( iteration in executedIterations ) {
+%> | ${iteration.dataValues.join( ' | ' )} | ${iteration.errors ? '(FAIL)' : '(PASS)'}
+<%          }
+        }
+        def problems = executedIterations.findAll { it.errors }
+        if ( problems ) {
+            out << "\nThe following problems occurred:<br><br>"
+            for ( badIteration in problems ) {
+                if ( badIteration.dataValues ) {
+                    out << '* ' << badIteration.dataValues << '<br>'
+                }
+                for ( error in badIteration.errors ) {
+                    out << '<pre><code>' << error << '</code></pre>'
+                }
+            }
+        }
+ %>
+
+<%
+} // close of features.eachFeature 
+%>
