@@ -14,14 +14,7 @@
 
 <%
     def generateTitle = {
-    def specTitle = utils.specAnnotation( data, spock.lang.Title )?.value()
-      if ( specTitle ) {
-          specTitle.split('\n').each { out << '<h3>' << it << '</h3>' }
-      }
-      if ( data.info.narrative ) {
-          if ( specTitle ) { out << '\n' }
-          out << '<pre>\n' << data.info.narrative << '\n</pre>'
-      }
+
     }
     
     def writeTagOrAttachment = { feature ->
@@ -79,19 +72,37 @@
                   html, body, #diagram {
                     height: 500px
                   }
-                  
+                  /* Element Highlight (not sequence flows) */
                   .highlight:not(.djs-connection) .djs-visual > :nth-child(1) {
-                    fill: green !important; /* color elements as green */
+                    fill: rgba(32, 216, 32, 0.63) !important; /* color elements as green */
+                    /* stroke: green !important; */
                   }
+                    /* Seqence Flow Highlight */
+                   .highlight-connection.djs-connection .djs-visual > :nth-child(1) {
+                    stroke: rgba(24, 155, 24, 0.822) !important;
+                    }
+
                   .highlight-overlay {
-                    background-color: green; /* color elements as green */
+                    background-color: rgba(28, 218, 28, 0.5); /* color elements as green */
                     opacity: 0.4;
                     pointer-events: none; /* no pointer events, allows clicking through onto the element */
                   }
+                   .transaction-boundary {
+                     background-color: rgba(255, 30, 30, 1);
+                     border-radius: 1px;
+                     min-height: 50px;
+                     width: 3px;
+                    }
+                    .user-transaction-boundary {
+                     background-color: rgba(30, 255, 183, 1);
+                     border-radius: 1px;
+                     min-height: 60px;
+                     width: 3px;
+                    }
 
                   pre code {
-                    background-color: #eee;
-                    border: 1px solid #999;
+                    background-color: #f6f8fa;
+                    border: 1px solid #f6f8fa;
                     display: block;
                     padding: 20px;
                   }
@@ -102,12 +113,10 @@
   }
 
 
-  def buildCoverage = { xml ->
+  def buildCoverage = { featureName = '', xml = '', userTasks = [], activityInstances =[], executedSequenceFlows =[], asyncData =[] ->
 
     def html = $/
-                <h3>Coverage Overview</h3>
-
-                  <div id="diagram"></div>
+                  <div id="diagram-${featureName}"></div>
 
                   <!-- viewer -->
                   <script src="https://unpkg.com/bpmn-js@2.1.0/dist/bpmn-viewer.development.js"></script>
@@ -117,36 +126,81 @@
 
                   <!-- app -->
                   <script>
-                    var viewer = new BpmnJS({
-                      container: '#diagram'
-                    });
 
-                    var diagramXML = '${xml.replaceAll("[\n\r]", "")}'
+                    function showDiagram_${featureName}() {
+                        var viewer = new BpmnJS({
+                            container: '#diagram-${featureName}'
+                            });
+                        var diagramXML = '${xml}' // Wrapped in quotes to ensure XML is a string
+                        var userTasks = ${userTasks}
+                        var asyncData = ${asyncData}
+                        var activityInstances = ${activityInstances}
+                        var executedSequenceFlows = ${executedSequenceFlows}  
 
-                    function showDiagram() {
                       viewer.importXML(diagramXML, function() {
                         var overlays = viewer.get('overlays'),
                             canvas = viewer.get('canvas'),
                             elementRegistry = viewer.get('elementRegistry');
-                            canvas.zoom('fit-viewport');
+                            
+                            // canvas.zoom('fit-viewport');
+                        
+                        // Activity Instances
+                        for (var i = 0; i < activityInstances.length; i++) {
+                            var activityInstance = activityInstances[i];
+                            canvas.addMarker(activityInstance, 'highlight');
+                        }
 
-                        var shape = elementRegistry.get('Task_1vbilbk');
-                        var $$overlayHtml = $$('<div class="highlight-overlay">')
-                                                .css({
-                                                  width: shape.width,
-                                                  height: shape.height
-                                                });
-                        overlays.add('Task_1vbilbk', {
-                          position: {
-                            top: 0,
-                            left: 0
-                          },
-                          html: $$overlayHtml
-                        });
-                      });
+                        // Executed Sequence Flows
+                        for (var i = 0; i < executedSequenceFlows.length; i++) {
+                            var sequenceFlow = executedSequenceFlows[i];
+                            canvas.addMarker(sequenceFlow, 'highlight-connection');
+                        }
+
+                        // UserTasks Boundaries
+                        for (var i = 0; i < userTasks.length; i++) {
+                            var task = userTasks[i];
+                            overlays.add(task, 'note', {
+                            position: {
+                                bottom: 40,
+                                left: -4
+                            },
+                            html: '<div class="user-transaction-boundary"></div>'
+                            });
+                        }
+
+                        // Async Boundaries
+                        for (var i = 0; i < asyncData.length; i++) {
+                            var item = asyncData[i];
+                            // asyncBefore
+                            if (item.asyncBefore === true){
+                                overlays.add(task, 'note', {
+                                position: {
+                                    bottom: 40,
+                                    left: -4
+                                },
+                                html: '<div class="transaction-boundary"></div>'
+                                });
+                            }
+                            // AsyncAfter
+                            if (item.asyncAfter === true){
+                                overlays.add(task, 'note', {
+                                position: {
+                                    bottom: 40,
+                                    right: -1
+                                },
+                                html: '<div class="transaction-boundary"></div>'
+                                });
+                            }
+
+                            // TODO add Exclusive Marker. Data is already in object `task.exclusvie == true/false`
+
+                        }
+
+
+                      }); // end of ImportXML
                     }
                     // load + show diagram
-                    showDiagram();
+                    showDiagram_${featureName}();
                   </script>
                 /$
 
@@ -159,69 +213,117 @@
 // END OF REUSABLE CODE SECTION
 %>
 
-<% setupHead() %>
+<% // Setup HTML <head> section for loading CSS and Libs
+    setupHead()
+%>
 
-<h1>Spock Framework Tests: BPMN and Coverage</h1>
+<% // Generate Title of Spec
+    def specTitle = utils.specAnnotation( data, spock.lang.Title )?.value()
+    if ( specTitle ) {
+        specTitle.split('\n').each { out << '<h3>' << it << '</h3>' }
+    }
+    if ( data.info.narrative ) {
+        if ( specTitle ) { out << '\n' }
+        out << '<pre>\n' << data.info.narrative << '\n</pre>'
+    } 
+%>
 
-<h2>Features</h2>
-
-<% generateTitle() %>
-
-<%
+<% // Initial Setup of All Feature Iterations
   features.eachFeature { name, result, blocks, iterations, params ->
 %>
 
-<h3> $name </h3>
+<% // Build Feature Name print-out
+    out << "<h3>${name}</h3>"
+%>
 
-<% 
+<% // Build BPMN-JS Coverage 
     if ( utils.isUnrolled( delegate ) ) {
-        buildCoverage( utils.nextSpecExtraInfo( data )[0]['bpmnModel'] )
+        buildCoverage( utils.nextSpecExtraInfo( data )['bpmnModel'] )
     } else {
         (1..iterations.size()).each {
-            buildCoverage( utils.nextSpecExtraInfo( data )[0]['bpmnModel'] )
+            out << "<h3>Coverage Overview: Iteration: ${it}</h3>"
+            def coverageData = utils.nextSpecExtraInfo( data )
+            buildCoverage(  "${name.replaceAll("\\s","")}${it}",
+                            coverageData[0]['bpmnModel'].replaceAll("[\n\r]", ""),
+                            coverageData[0]['userTasks'],
+                            coverageData[0]['activityInstances'],
+                            coverageData[0]['executedSequenceFlows'],
+                            coverageData[0]['asyncData'])
+            println 'iterations:\n'
+            println iterations.inspect()
         }
     }
   // }
 %>
 
-<h4>Feature Test Results:</h4>
-Result: **$result**
+<% // Feature Result
+    out << "<h4>Feature Test Results:</h4>"
+    out << "Result: ${result}"
+%>
 
-<%
-  for ( block in blocks ) {
- %>
-<h5> ${block.kind} ${block.text} </h5>
-<%
-          if ( block.sourceCode ) {
-              out << "<pre><code>"
-              block.sourceCode.each { codeLine ->
-                  out << codeLine << '<br>'
-              }
-              out << "</code></pre>"
-          }
+<% // Feature Statement blocks (+code blocks)
+    for ( block in blocks ) {
+        out << '<h5>'
+        out << "${block.kind}  ${block.text}"
+        out << '</h5>'
+        
+        if ( block.sourceCode ) {
+            out << "<pre><code>"
+            block.sourceCode.each { codeLine ->
+                out << codeLine << '<br>'
+            }
+            out << "</code></pre>"
         }
-        def executedIterations = iterations.findAll { it.dataValues || it.errors }
-        if ( params && executedIterations ) {
- %>
- | ${params.join( ' | ' )} |
- |${params.collect { ( '-' * ( it.size() + 2 ) ) + '|' }.join()}
-<%
-            for ( iteration in executedIterations ) {
-%> | ${iteration.dataValues.join( ' | ' )} | ${iteration.errors ? '(FAIL)' : '(PASS)'}
-<%          }
+    }
+%>
+
+<% // Iterations Data Table + Pass/Fail result of each iteration
+    def executedIterations = iterations.findAll { it.dataValues || it.errors }
+    if (params && executedIterations) {
+        out << '<table border="1">'
+        
+        // Build Header Row
+        out << '<tr>'
+        out << "<th> _Iteration_ </th>"
+        params.each {
+            out << "<th>${it}</th>"
         }
-        def problems = executedIterations.findAll { it.errors }
-        if ( problems ) {
-            out << "\nThe following problems occurred:<br><br>"
-            for ( badIteration in problems ) {
-                if ( badIteration.dataValues ) {
-                    out << '* ' << badIteration.dataValues << '<br>'
-                }
-                for ( error in badIteration.errors ) {
-                    out << '<pre><code>' << error << '</code></pre>'
-                }
+        out << '<th> _Result_ </th>'
+        out << '</tr>'
+        
+        // Build Data Rows:
+        def failText = "FAIL"
+        def passText = "PASS"
+        executedIterations.eachWithIndex { iteration, index, indexPlusOne = index + 1 ->
+            out << '<tr>'
+            out << "<td>${indexPlusOne}</td>"
+            iteration.dataValues.each {
+                out << "<td>${it}</td>"
+            }
+            if (iteration.errors) {
+                out << "<td>${failText}</td>"
+            } else {
+                out << "<td>${passText}</td>"
+            }
+            out << '</tr>'
+        }
+        out << '</table>'
+    }
+%>
+
+<% // Feature Issues/Problems Listing
+    def problems = executedIterations.findAll { it.errors }
+    if ( problems ) {
+        out << "<h3>The following problems occurred:</h3>"
+        for ( badIteration in problems ) {
+            if ( badIteration.dataValues ) {
+                out << 'Iteration: ' << badIteration.dataValues
+            }
+            for ( error in badIteration.errors ) {
+                out << '<pre><code>' << error << '</code></pre>'
             }
         }
+    }
  %>
 
 <%

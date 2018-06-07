@@ -15,6 +15,7 @@ import org.junit.ClassRule
 import spock.lang.*
 
 import static org.camunda.spin.Spin.*
+import groovy.json.JsonOutput
 
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
@@ -87,7 +88,9 @@ class ConditionalStartSpec extends Specification {
     println "Deployment ID: '${deploymentId}' has been created"
   }
 
-  def 'Interactive Spec to show how to output data from the process'() {
+
+
+  def 'Interactive Spec to show how to output data from the process'(int a) {
     when: 'Starting the process instance'
       // reportInfo "DOGGGs"
       //@TODO Move variable creation and management into its own class.
@@ -128,15 +131,75 @@ class ConditionalStartSpec extends Specification {
     then: 'Process has ended'
       assertThat(processInstance[0]).isEnded()
 
-
+    where:
+        a | _ 
+        1 | _
   }
+
+
+def 'Second feature to show missing coverage'( int a, int bb) {
+    when: 'Starting the process instance'
+      // reportInfo "DOGGGs"
+      //@TODO Move variable creation and management into its own class.
+      def json = S("{\"customer\": \"Kermit\"}")
+      def startingVariables = [
+                                'json':json,
+                                'temp': 24
+                                ]
+      // we assume only one process instance will be returned
+      def processInstance = runtimeService().createConditionEvaluation()
+                                      .setVariables(startingVariables)
+                                      .evaluateStartConditions();
+      println processInstance.size()
+      executionId = processInstance[0].getId()
+      processDefinitionId = processInstance[0].getProcessDefinitionId()
+
+    then: 'Process is Active and waiting for user task completion'
+      assertThat(processInstance[0]).isActive()
+      
+      // processInstanceQuery() is being exposed as part of:
+      // http://camunda.github.io/camunda-bpm-assert/apidocs/org/camunda/bpm/engine/test/assertions/ProcessEngineTests.html
+      // See import statement at top of test
+      assertThat(processInstanceQuery().count()).isEqualTo(1)
+
+    then: 'Process Variables are:'
+    def processVariables = runtimeService().getVariables(executionId)
+    println processVariables.inspect()
+    // The .inspect() method is a special groovy method that
+    // will print out the object:
+    // http://docs.groovy-lang.org/latest/html/api/groovy/inspect/Inspector.html
+
+    // You can uncomment these lines if you like, but is not needed.
+
+    // then: 'Complete Final User Task (The placeholder user task)'
+    //   assertThat(processInstance[0]).isWaitingAt("Task_0qacez5")
+    //   complete(task(processInstance[0]))
+    
+    // then: 'Process has ended'
+    //   assertThat(processInstance[0]).isEnded()
+
+    where:
+        a | bb 
+        22 | 33
+        877 | 99
+  }
+
+
+
 
   def cleanup(){
           // Get Actvitity Events
-    def events = historyService().createHistoricActivityInstanceQuery().processInstanceId(executionId).orderPartiallyByOccurrence().asc().list().collect {it.activityId}
+    def events = historyService().createHistoricActivityInstanceQuery().processInstanceId(executionId).finished().orderPartiallyByOccurrence().asc().list()
+    def activityEvents = events.findAll{it.activityType != 'sequenceFlow'}.collect {it.activityId}
     println '\nExecuted Activity Events:'
-    println events
-    reportData['activityInstances'] = events
+    println activityEvents
+    reportData['activityInstances'] = JsonOutput.toJson(activityEvents)
+
+    def sequenceFlows = events.findAll{it.activityType == 'sequenceFlow'}.collect {it.activityId}
+    println '\nExecuted Sequence Flows:'
+    println sequenceFlows
+    reportData['executedSequenceFlows'] = JsonOutput.toJson(sequenceFlows)
+
 
     println '\nAsync Element Configs:'
     def model = repositoryService().getBpmnModelInstance(processDefinitionId)
@@ -146,20 +209,19 @@ class ConditionalStartSpec extends Specification {
                                                                                                         'asyncAfter': it.isCamundaAsyncAfter(),
                                                                                                         'exclusive': it.isCamundaExclusive()
                                                                                                         ]}
-    reportData['asyncData'] = asyncData
+    reportData['asyncData'] = JsonOutput.toJson(asyncData)
     println asyncData
 
     println '\nUser Tasks:'
     def userTasks =  model.getModelElementsByType(org.camunda.bpm.model.bpmn.instance.UserTask.class).collect {it.getId()}
     println userTasks
-    reportData['userTasks'] = userTasks
+    reportData['userTasks'] = JsonOutput.toJson(userTasks)
     // https://docs.camunda.org/javadoc/camunda-bpm-platform/7.8/org/camunda/bpm/engine/RepositoryService.html#deleteDeployment(java.lang.String,%20boolean,%20boolean,%20boolean)
 
-    reportInfo(reportData)
+    reportInfo(reportData.clone())
   }
 
   def cleanupSpec() {
-
     repositoryService().deleteDeployment(deploymentId, 
                                                  true, // cascade
                                                  true, // skipCustomListeners
