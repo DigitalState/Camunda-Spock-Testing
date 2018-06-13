@@ -1,37 +1,4 @@
-<%
-    def stats = utils.stats( data )
- %>
- <h1> Report for ${utils.getSpecClassName( data )}</h1>
-
-<h1>Summary</h1>
-
-* Total Runs: ${stats.totalRuns}<br>
-* Success Rate: ${fmt.toPercentage(stats.successRate)}<br>
-* Failures: ${stats.failures}<br>
-* Errors:   ${stats.errors}<br>
-* Skipped:  ${stats.skipped}<br>
-* Total time: ${fmt.toTimeDuration(stats.time)}<br>
-
-<%
-    def generateTitle = {
-
-    }
-    
-    def writeTagOrAttachment = { feature ->
-        def tagsByKey = feature.tags.groupBy( { t -> t.key } )
-        tagsByKey.each { key, values ->
-            out << '\n#### ' << key.capitalize() << 's:\n\n'
-            values.each { tag ->
-                out << '* ' << tag.url << '\n'
-            }
-        }
-        if ( feature.attachments.size > 0 ) {
-            out << '\n#### ' << 'See:' << '\n\n'
-            feature.attachments.each { value ->
-                out << '* ' << value.url << '\n'
-            } 
-        }
-    }
+<% // GENERICS
     def writePendingFeature = { pendingFeature ->
         if ( pendingFeature ) {
             out << '\n> Pending Feature\n'
@@ -40,21 +7,14 @@
     def writeHeaders = { headers ->
         if ( headers ) {
             headers.each { h ->
-                out << '> ' << h << '\n'
-            }
-        }
-    }
-    def writeExtraInfo = { extraInfo ->
-        if ( extraInfo ) {
-            extraInfo.each { info ->
-                out << '* ' << info << '\n'
+                out << '>99 ' << h << '\n'
             }
         }
     }
     writeHeaders( utils.specHeaders( data ) )
-    writeTagOrAttachment data.info
-%>
+    // writeTagOrAttachment data.info
 
+%>
 
 <%
 //START OF REUSABLE CODE SECTION
@@ -63,146 +23,218 @@
 
   def setupHead = {
     def head = $/
-                <head>
-                <meta charset="utf-8">
-                <meta http-equiv="content-type" content="text/html; charset=utf-8">
-                <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<!doctype html>
+<html lang="en">
+    <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-                <style>
-                  html, body, #diagram {
-                    height: 500px
-                  }
-                  /* Element Highlight (not sequence flows) */
-                  .highlight:not(.djs-connection) .djs-visual > :nth-child(1) {
-                    fill: rgba(32, 216, 32, 0.63) !important; /* color elements as green */
-                    /* stroke: green !important; */
-                  }
-                    /* Seqence Flow Highlight */
-                   .highlight-connection.djs-connection .djs-visual > :nth-child(1) {
-                    stroke: rgba(24, 155, 24, 0.822) !important;
-                    }
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.1/sketchy/bootstrap.min.css" crossorigin="anonymous">
+    
+    <title>BPMN Unit Test</title>
+    
+    <style>
+        /* Element Highlight (not sequence flows) */
+        .highlight:not(.djs-connection) .djs-visual > :nth-child(1) {
+        fill: rgba(32, 216, 32, 0.63) !important; /* color elements as green */
+        }
 
-                  .highlight-overlay {
-                    background-color: rgba(28, 218, 28, 0.5); /* color elements as green */
-                    opacity: 0.4;
-                    pointer-events: none; /* no pointer events, allows clicking through onto the element */
-                  }
-                   .transaction-boundary {
-                     background-color: rgba(255, 30, 30, 1);
-                     border-radius: 1px;
-                     min-height: 50px;
-                     width: 3px;
-                    }
-                    .user-transaction-boundary {
-                     background-color: rgba(30, 255, 183, 1);
-                     border-radius: 1px;
-                     min-height: 60px;
-                     width: 3px;
-                    }
+        /* Element Highlight (not sequence flows) */
+        .highlight-running:not(.djs-connection) .djs-visual > :nth-child(1) {
+        fill: rgba(32, 81, 216, 0.63) !important; /* color elements as blue */
+        }
+        /* Seqence Flow Highlight */
+        .highlight-connection.djs-connection .djs-visual > :nth-child(1) {
+        stroke: rgba(24, 155, 24, 0.822) !important;
+        }
 
-                  pre code {
-                    background-color: #f6f8fa;
-                    border: 1px solid #f6f8fa;
-                    display: block;
-                    padding: 20px;
-                  }
-                </style>
-              </head>
+        .transaction-boundary {
+            background-color: rgba(255, 30, 30, 1);
+            border-radius: 1px;
+            min-height: 50px;
+            width: 3px;
+        }
+        .user-transaction-boundary {
+            background-color: rgba(30, 255, 183, 1);
+            border-radius: 1px;
+            min-height: 60px;
+            width: 3px;
+        }
+
+        .receivetask-transaction-boundary {
+            background-color: rgba(30, 255, 183, 1);
+            border-radius: 1px;
+            min-height: 60px;
+            width: 3px;
+        }
+
+        .intermediatecatchevent-transaction-boundary {
+            background-color: rgba(30, 255, 183, 1);
+            border-radius: 1px;
+            min-height: 60px;
+            width: 3px;
+        }
+
+        pre code {
+        background-color: #f6f8fa;
+        border: 1px solid #f6f8fa;
+        display: block;
+        padding: 20px;
+        }
+
+        .activity-instance-count{
+            background-color: rgba(165, 196, 189, 0.900);
+            color: rgba(0, 0, 0, 0.900);
+            border-radius: 5px;
+            font-family: Arial;
+            font-size: 10px;
+            padding: 3px;
+            min-height: 16px;
+            min-width: 15px;
+            text-align: center;
+        }
+    </style>
+    </head>
+
+    <body>
+        <div class="container-fluid">
               /$
     out << head
   }
 
 
-  def buildCoverage = { featureName = '', xml = '', userTasks = [], activityInstances =[], executedSequenceFlows =[], asyncData =[] ->
+  def buildCoverage = { featureName = '', xml = '', userTasks = [], activityInstances =[], executedSequenceFlows =[], asyncData =[], receiveTasks =[], intermediateCatchEvents =[], activityInstancesStillActive =[] ->
 
     def html = $/
-                  <div id="diagram-${featureName}"></div>
+<div id="diagram-${featureName}" style="height: 500px"></div>
 
-                  <!-- viewer -->
-                  <script src="https://unpkg.com/bpmn-js@2.1.0/dist/bpmn-viewer.development.js"></script>
+<!-- viewer -->
+<script src="https://unpkg.com/bpmn-js@2.1.0/dist/bpmn-viewer.development.js"></script>
 
-                  <!-- jquery (required for example only) -->
-                  <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.js"></script>
+<!-- jquery (required for example only) -->
+<script src="https://unpkg.com/jquery@3.3.1/dist/jquery.js"></script>
 
-                  <!-- app -->
-                  <script>
+<!-- app -->
+<script>
 
-                    function showDiagram_${featureName}() {
-                        var viewer = new BpmnJS({
-                            container: '#diagram-${featureName}'
-                            });
-                        var diagramXML = '${xml}' // Wrapped in quotes to ensure XML is a string
-                        var userTasks = ${userTasks}
-                        var asyncData = ${asyncData}
-                        var activityInstances = ${activityInstances}
-                        var executedSequenceFlows = ${executedSequenceFlows}  
-
-                      viewer.importXML(diagramXML, function() {
-                        var overlays = viewer.get('overlays'),
-                            canvas = viewer.get('canvas'),
-                            elementRegistry = viewer.get('elementRegistry');
-                            
-                            // canvas.zoom('fit-viewport');
-                        
-                        // Activity Instances
-                        for (var i = 0; i < activityInstances.length; i++) {
-                            var activityInstance = activityInstances[i];
-                            canvas.addMarker(activityInstance, 'highlight');
-                        }
-
-                        // Executed Sequence Flows
-                        for (var i = 0; i < executedSequenceFlows.length; i++) {
-                            var sequenceFlow = executedSequenceFlows[i];
-                            canvas.addMarker(sequenceFlow, 'highlight-connection');
-                        }
-
-                        // UserTasks Boundaries
-                        for (var i = 0; i < userTasks.length; i++) {
-                            var task = userTasks[i];
-                            overlays.add(task, 'note', {
-                            position: {
-                                bottom: 40,
-                                left: -4
-                            },
-                            html: '<div class="user-transaction-boundary"></div>'
-                            });
-                        }
-
-                        // Async Boundaries
-                        for (var i = 0; i < asyncData.length; i++) {
-                            var item = asyncData[i];
-                            // asyncBefore
-                            if (item.asyncBefore === true){
-                                overlays.add(task, 'note', {
-                                position: {
-                                    bottom: 40,
-                                    left: -4
-                                },
-                                html: '<div class="transaction-boundary"></div>'
-                                });
-                            }
-                            // AsyncAfter
-                            if (item.asyncAfter === true){
-                                overlays.add(task, 'note', {
-                                position: {
-                                    bottom: 40,
-                                    right: -1
-                                },
-                                html: '<div class="transaction-boundary"></div>'
-                                });
-                            }
-
-                            // TODO add Exclusive Marker. Data is already in object `task.exclusvie == true/false`
-
-                        }
+function showDiagram_${featureName}() {
+    var viewer = new BpmnJS({
+        container: '#diagram-${featureName}'
+        });
+    var diagramXML = '${xml}' // Wrapped in quotes to ensure XML is a string
+    var userTasks = ${userTasks}
+    var activityInstances = ${activityInstances}
+    var executedSequenceFlows = ${executedSequenceFlows} 
+    var asyncData = ${asyncData}
+    var receiveTasks = ${receiveTasks}
+    var intermediateCatchEvents = ${intermediateCatchEvents}
+    var activityInstancesStillActive = ${activityInstancesStillActive}
 
 
-                      }); // end of ImportXML
-                    }
-                    // load + show diagram
-                    showDiagram_${featureName}();
-                  </script>
-                /$
+    viewer.importXML(diagramXML, function() {
+    var overlays = viewer.get('overlays'),
+        canvas = viewer.get('canvas'),
+        elementRegistry = viewer.get('elementRegistry');
+        
+        // canvas.zoom('fit-viewport');
+    
+    for (var key in activityInstances) {
+        var activityInstance = key;
+        canvas.addMarker(activityInstance, 'highlight');
+        overlays.add(key, {
+                    position: {
+                        bottom: 0,
+                        right: 0
+                    },
+                    html: '<div class="activity-instance-count">' + activityInstances[key] + '</div>'
+                    });
+    }
+
+    // Activity Instances: unFinished (Still Running)
+    for (var i = 0; i < activityInstancesStillActive.length; i++) {
+        var activityInstanceStillActive = activityInstancesStillActive[i];
+        canvas.addMarker(activityInstanceStillActive, 'highlight-running');
+    }
+
+    // Executed Sequence Flows
+    for (var i = 0; i < executedSequenceFlows.length; i++) {
+        var sequenceFlow = executedSequenceFlows[i];
+        canvas.addMarker(sequenceFlow, 'highlight-connection');
+    }
+
+    // UserTasks Boundaries
+    for (var i = 0; i < userTasks.length; i++) {
+        var task = userTasks[i];
+        overlays.add(task, 'note', {
+        position: {
+            bottom: 40,
+            left: -4
+        },
+        html: '<div class="user-transaction-boundary"></div>'
+        });
+    }
+
+    // Receive Tasks Boundaries
+    for (var i = 0; i < receiveTasks.length; i++) {
+        var task = receiveTasks[i];
+        overlays.add(task, 'note', {
+        position: {
+            bottom: 40,
+            left: -4
+        },
+        html: '<div class="receivetask-transaction-boundary"></div>'
+        });
+    }
+
+    // Intermediate Catch Events Boundaries
+    for (var i = 0; i < intermediateCatchEvents.length; i++) {
+        var event = intermediateCatchEvents[i];
+        overlays.add(event, 'note', {
+        position: {
+            bottom: 18,
+            left: -4
+        },
+        html: '<div class="intermediatecatchevent-transaction-boundary"></div>'
+        });
+    }
+
+    // Async Boundaries
+    for (var i = 0; i < asyncData.length; i++) {
+        var item = asyncData[i];
+        // asyncBefore
+        if (item.asyncBefore === true){
+            overlays.add(task, 'note', {
+            position: {
+                bottom: 40,
+                left: -4
+            },
+            html: '<div class="transaction-boundary"></div>'
+            });
+        }
+        // AsyncAfter
+        if (item.asyncAfter === true){
+            overlays.add(task, 'note', {
+            position: {
+                bottom: 40,
+                right: -1
+            },
+            html: '<div class="transaction-boundary"></div>'
+            });
+        }
+
+        // TODO add Exclusive Marker. Data is already in object `task.exclusvie == true/false`
+
+    }
+
+
+    }); // end of ImportXML
+}
+// load + show diagram
+showDiagram_${featureName}();
+</script>
+/$
 
       out << html
       }
@@ -217,15 +249,134 @@
     setupHead()
 %>
 
+<% // Report Title
+    out << '<div class="row">'
+    
+    out << '<div class="col">'
+    out << "<h1>Report for ${utils.getSpecClassName(data)}</h1>"
+    out << '</div>'
+
+    out << '<div class="col-2">'
+    out << '<img class="float-right mx-2 my-2" src="../test-classes/templateReportCreator/logo.png" width="200px" />'
+    out << '<img class="float-right mx-2 my-2" src="../test-classes/templateReportCreator/camunda.png" width="200px" />'
+    out << '</div>'
+
+    out << '</div>'
+%>
+
+<% // Feature Summary Section
+    def stats = utils.stats( data )
+    
+    out << '<div class="row"> <div class="col-6">'
+
+    out << "<h2>Feature Summary:</h2>"
+
+    out << '<table class="table table-sm table-borderless">'
+    // out << '<thead>'
+    // out << '<tr>'
+    // out << '<th class="text-primary" scope="col">Item</th>'
+    // out << '<th class="text-primary" scope="col">Result</th>'
+    // out << '</tr>'
+    // out << '</thead>'
+ 
+    out << '<tbody>'
+    out << '<tr>' << '<th class="text-primary" scope="row">Total Runs</th>' << "<td> ${stats.totalRuns} </td>" << '</tr>'
+    out << '<tr>' << '<th class="text-primary" scope="row">Success Rate</th>' << "<td> ${fmt.toPercentage(stats.successRate)} </td>" << '</tr>'
+    out << '<tr>' << '<th class="text-primary" scope="row">Failures</th>' << "<td> ${stats.failures} </td>" << '</tr>'
+    out << '<tr>' << '<th class="text-primary" scope="row">Errors</th>' << "<td> ${stats.errors} </td>" << '</tr>'
+    out << '<tr>' << '<th class="text-primary" scope="row">Skipped</th>' << "<td> ${stats.skipped} </td>" << '</tr>'
+    out << '<tr>' << '<th class="text-primary" scope="row">Total time</th>' << "<td> ${fmt.toTimeDuration(stats.time)} </td>" << '</tr>'
+    out << '</tbody>'
+
+    out << '</table>'
+
+    out << '</div></div>'
+ %>
+
 <% // Generate Title of Spec
-    def specTitle = utils.specAnnotation( data, spock.lang.Title )?.value()
-    if ( specTitle ) {
-        specTitle.split('\n').each { out << '<h3>' << it << '</h3>' }
-    }
-    if ( data.info.narrative ) {
-        if ( specTitle ) { out << '\n' }
-        out << '<pre>\n' << data.info.narrative << '\n</pre>'
+    def specTitle = data.getInfo().getAnnotation(spock.lang.Title)?.value()
+    if (specTitle != null) {
+        out << '<div class="row"> <div class="col-8">'
+
+        out << '<h1>'
+        out << specTitle
+        out << '</h1>'
+
+        out << '</div></div>'
     } 
+%>
+
+<% // Spec Narative
+    def specNarrative = data.getInfo().getNarrative()  
+    if (specNarrative != null){
+        out << '<div class="row"> <div class="col-8">'
+
+        out << '<h2>Spec Narrative:</h2>'
+        // out << '<pre>'
+        // Also provides a example of a split based on new lines within the test
+        // Spilt can be reused for things like a multi-line @Title etc 
+        specNarrative.split('\n').each { 
+            out << '<p>' << it << '</p>' 
+            }
+        // out << '</pre>'
+
+        out << '</div></div>'
+    }
+%>
+
+<% // @See and @Issue Spec Annotations Two Column Row
+    // Creates a Single Row for Both Spec @Issue and Spec @See Annotations
+    // Row is alows in Spec @See Annotion below
+    out << '<div class="row"><div class="col"><h2>Additional Spec Context:</h2></div></div>'
+    out << '<div class="row">'
+    out << '<div class="col-4">'
+%>
+<% // Spec Issue Annotation
+    def specIssueAnnotation = data.getInfo().getAnnotation(spock.lang.Issue)?.value()
+
+    if (specIssueAnnotation != null){
+        out << '<table class="table table-sm table-borderless">'
+        out << '<tr>'
+        out << '<th class="text-primary" scope="col">Related Issues</th>'
+        out << '</tr>'
+
+        specIssueAnnotation.each {
+            out << '<tr>'
+            out << "<td>${it}</td>"
+            out << '</tr>'
+        }
+
+        out << '</table>'
+    }
+%>
+<% // Close of Div for col-4 of @Issue Spec Annotation
+    out << '</div>'
+%>
+
+<% // Second Column of Spec Annotations
+    out << '<div class="col-4">'
+%>
+<% // Spec See Annotation
+    def specSeeAnnotation = data.getInfo().getAnnotation(spock.lang.See)?.value()
+
+    if (specSeeAnnotation != null){
+        out << '<table class="table table-sm table-borderless">'
+        out << '<tr>'
+        out << '<th class="text-primary" scope="col">Related Content</th>'
+        out << '</tr>'
+
+        specSeeAnnotation.each {
+            out << '<tr>'
+            out << "<td>${it}</td>"
+            out << '</tr>'
+        }
+
+        out << '</table>'
+    }
+%>
+<% // two column row div close for @Issue and @See Tables
+    // Second close of Dev is from Spec @Issue annotation above
+    out << '</div></div>'
 %>
 
 <% // Initial Setup of All Feature Iterations
@@ -233,72 +384,175 @@
 %>
 
 <% // Build Feature Name print-out
-    out << "<h3>${name}</h3>"
+    out << '<hr>'
+    out << '<div class="row"> <div class="col">'
+
+    out << "<h2>Feature: ${name}</h2>"
+
+    out << '</div></div>'
 %>
+
+<% // @See and @Issue Feature Annotations Two Column Row
+    // Creates a Single Row for Both Feature @Issue and Feature @See Annotations
+    // Row is alows in Feature @See Annotion below
+    out << '<div class="row"><div class="col"><h3>Additional Feature Context:</h3></div></div>'
+    out << '<div class="row">'
+    out << '<div class="col">'
+%>
+<% // Feature Issue Annotation
+    def issueAnnotation = getFeatureMethod().getAnnotation(spock.lang.Issue)?.value()
+
+    if (issueAnnotation != null){
+        out << '<table class="table table-sm table-borderless">'
+        out << '<tr>'
+        out << '<th class="text-primary" scope="col">Related Issues</th>'
+        out << '</tr>'
+
+        issueAnnotation.each {
+            out << '<tr>'
+            out << "<td>${it}</td>"
+            out << '</tr>'
+        }
+
+        out << '</table>'
+    }
+%>
+<% // Close of Div for col-4 of @Issue Feature Annotation
+    out << '</div>'
+%>
+
+<% // Second Column of Feature Annotations
+    out << '<div class="col">'
+%>
+<% // Feature See Annotation
+    def seeAnnotation = getFeatureMethod().getAnnotation(spock.lang.See)?.value()
+
+    if (seeAnnotation != null){
+        out << '<table class="table table-sm table-borderless">'
+        out << '<tr>'
+        out << '<th class="text-primary" scope="col">Related Content</th>'
+        out << '</tr>'
+
+        seeAnnotation.each {
+            out << '<tr>'
+            out << "<td>${it}</td>"
+            out << '</tr>'
+        }
+
+       out << '</table>'
+    }
+%>
+<% // two column row div close for @Issue and @See Tables
+    // Second close of Dev is from Spec @Issue annotation above
+    out << '</div></div>'
+%>
+
 
 <% // Build BPMN-JS Coverage 
     if ( utils.isUnrolled( delegate ) ) {
+        // @TODO Make unRolled work
+        // Current does not work
         buildCoverage( utils.nextSpecExtraInfo( data )['bpmnModel'] )
     } else {
         (1..iterations.size()).each {
-            out << "<h3>Coverage Overview: Iteration: ${it}</h3>"
+            out << '<div class="row"> <div class="col-12">'
+
+            out << "<h3>Feature Coverage Overview: Iteration: ${it}</h3>"
             def coverageData = utils.nextSpecExtraInfo( data )
+
             buildCoverage(  "${name.replaceAll("\\s","")}${it}",
                             coverageData[0]['bpmnModel'].replaceAll("[\n\r]", ""),
                             coverageData[0]['userTasks'],
                             coverageData[0]['activityInstances'],
                             coverageData[0]['executedSequenceFlows'],
-                            coverageData[0]['asyncData'])
-            println 'iterations:\n'
-            println iterations.inspect()
-        }
-    }
-  // }
+                            coverageData[0]['asyncData'],
+                            coverageData[0]['receiveTasks'],
+                            coverageData[0]['intermediateCatchEvents'],
+                            coverageData[0]['activityInstancesStillActive']
+                            )
+            
+            out << '</div></div>'
+        } // End of .each loop
+    } // End of if / else
 %>
 
 <% // Feature Result
-    out << "<h4>Feature Test Results:</h4>"
-    out << "Result: ${result}"
+    out << '<div class="row"> <div class="col-8">'
+
+    out << "<h3>Feature Test Results:</h3>"
+    if (result == 'PASS') {
+        out << '<div class="alert alert-success">'
+
+        out << "<strong>Result:</strong> ${result}"
+
+        out << '</div>'
+
+    } else if (result == 'FAIL') {
+        out << '<div class="alert alert-danger">'
+
+        out << "<strong>Result:</strong> ${result}"
+
+        out << '</div>'
+    }
+
+    out << '</div></div>'
 %>
 
 <% // Feature Statement blocks (+code blocks)
+    out << '<div class="row"> <div class="col-8">'
+
     for ( block in blocks ) {
-        out << '<h5>'
-        out << "${block.kind}  ${block.text}"
-        out << '</h5>'
+        out << '<details><summary class="text-primary">'
+        out << "<strong class=\"text-muted\">${block.kind}</strong>  ${block.text}"
+        out << '</summary>'
         
         if ( block.sourceCode ) {
-            out << "<pre><code>"
+            out << "<pre> <code>"
             block.sourceCode.each { codeLine ->
-                out << codeLine << '<br>'
+                out << codeLine
+                out << '<br>'
             }
-            out << "</code></pre>"
+            out << "</code> </pre>"
         }
+        out << "</details>"
     }
+
+    out << '</div></div>'
 %>
 
 <% // Iterations Data Table + Pass/Fail result of each iteration
     def executedIterations = iterations.findAll { it.dataValues || it.errors }
     if (params && executedIterations) {
-        out << '<table border="1">'
+        out << '<div class="row"> <div class="col-8">'
+
+        out << '<table class="table table-borderless">'
         
         // Build Header Row
         out << '<tr>'
-        out << "<th> _Iteration_ </th>"
+        out << '<th class="text-primary" scope="col"> Iteration </th>'
         params.each {
-            out << "<th>${it}</th>"
+            out << '<th class="text-info" scope="col">' << it << '</th>'
         }
-        out << '<th> _Result_ </th>'
+        out << '<th class="text-primary" scope="col"> Result </th>'
         out << '</tr>'
         
         // Build Data Rows:
-        def failText = "FAIL"
-        def passText = "PASS"
+        String failText = "FAIL"
+        String passText = "PASS"
+        // indexPlusOne was created so the iteration count starts at '1' rather than '0'
+        // This was done because business users understand 'Interation 1' as the 
+        // first iteration rather than 'Iteration 0'
         executedIterations.eachWithIndex { iteration, index, indexPlusOne = index + 1 ->
-            out << '<tr>'
-            out << "<td>${indexPlusOne}</td>"
+            if (iteration.errors){
+                out << '<tr class="table-danger">'
+            } else {
+                out << '<tr>'
+            }
+
+            out << "<td class=\"text-primary\">${indexPlusOne}</td>"
+
             iteration.dataValues.each {
-                out << "<td>${it}</td>"
+                out << "<td class=\"text-info\">${it}</td>"
             }
             if (iteration.errors) {
                 out << "<td>${failText}</td>"
@@ -307,25 +561,41 @@
             }
             out << '</tr>'
         }
+        out << '<caption>Blue text are Data Table variables</caption>'
         out << '</table>'
+
+        out << '</div></div>'
     }
 %>
 
 <% // Feature Issues/Problems Listing
     def problems = executedIterations.findAll { it.errors }
     if ( problems ) {
-        out << "<h3>The following problems occurred:</h3>"
+        out << '<div class="row"> <div class="col-10">'
+
+        out << "<h4>The following problems occurred:</h4>"
         for ( badIteration in problems ) {
             if ( badIteration.dataValues ) {
-                out << 'Iteration: ' << badIteration.dataValues
+                out << '<p class="text-primary">Iteration: ' << badIteration.dataValues << '</p>'
             }
             for ( error in badIteration.errors ) {
-                out << '<pre><code>' << error << '</code></pre>'
+                out << '<pre><code>' 
+                out << "Error related to line: ${error.getStackTrace().lineNumber}\n"
+                out << error 
+                out << '</code></pre>'
             }
         }
+        out << '</div></div>'
     }
  %>
 
 <%
 } // close of features.eachFeature 
+%>
+
+
+<% // End of HTML Body
+out << '</div>' // of of container-fluid div
+out << '</body>'
+out << '</html>'
 %>

@@ -26,8 +26,15 @@ import org.camunda.bpm.model.bpmn.instance.camunda.CamundaScript
 import org.camunda.bpm.model.bpmn.instance.camunda.CamundaExecutionListener
 
 
-@Title("Conditional Start Testing for Scripting with Camunda 7.9")
-
+// @Title("Conditional Start Testing for Scripting with Camunda 7.9")
+@Narrative("""
+To test Conditional Start Events,
+that were apart of Camunda 7.9 release,
+to determine if there are implications for scaling.
+""")
+@See(["forum.camunda.org", "forum.bpmn.io", "See Spec document approved by Committee (Spec001-v4-FINAL.docx)"])
+@Issue(["github.com/stephenott", "CAM-1234"])
+@Title('Test Conidition Start Event Usage')
 class ConditionalStartSpec extends Specification {
 
   // Use when you want to run the Camunda Engine
@@ -89,21 +96,25 @@ class ConditionalStartSpec extends Specification {
   }
 
 
-
-  def 'Interactive Spec to show how to output data from the process'(int a) {
-    when: 'Starting the process instance'
+  @See(["forum.camunda.org/123/123", "Document: abc123.docx on shared drive"])
+  @Issue(["https://github.com/DigitalState/Camunda-Spock-Testing/issues/1", "https://github.com/DigitalState/Camunda-Spock-Testing/issues/2"])
+  def 'Interactive Spec to show how to output data from the process'() {
+    when: 'Setting up initial Process Variables'
       // reportInfo "DOGGGs"
       //@TODO Move variable creation and management into its own class.
       def json = S("{\"customer\": \"Kermit\"}")
       def startingVariables = [
                                 'json':json,
-                                'temp': 24
+                                'temp': 24,
+                                'path1': false,
+                                'path2': false
                                 ]
+
       // we assume only one process instance will be returned
+    and: 'Starting a process instance with Conditional Evaluation using the process variables '
       def processInstance = runtimeService().createConditionEvaluation()
                                       .setVariables(startingVariables)
                                       .evaluateStartConditions();
-      println processInstance.size()
       executionId = processInstance[0].getId()
       processDefinitionId = processInstance[0].getProcessDefinitionId()
 
@@ -113,10 +124,11 @@ class ConditionalStartSpec extends Specification {
       // processInstanceQuery() is being exposed as part of:
       // http://camunda.github.io/camunda-bpm-assert/apidocs/org/camunda/bpm/engine/test/assertions/ProcessEngineTests.html
       // See import statement at top of test
-      assertThat(processInstanceQuery().count()).isEqualTo(1)
+      // assertThat(processInstanceQuery().count()).isEqualTo(1)
 
-    then: 'Process Variables are:'
+    then: 'The current process variables are equal to the starting variables'
     def processVariables = runtimeService().getVariables(executionId)
+    assertThat(processVariables == startingVariables)
     println processVariables.inspect()
     // The .inspect() method is a special groovy method that
     // will print out the object:
@@ -125,26 +137,25 @@ class ConditionalStartSpec extends Specification {
     // You can uncomment these lines if you like, but is not needed.
 
     then: 'Complete Final User Task (The placeholder user task)'
-      assertThat(processInstance[0]).isWaitingAt("Task_0qacez5")
+      assertThat(processInstance[0]).isWaitingAt("Task_0qacez55")
       complete(task(processInstance[0]))
     
     then: 'Process has ended'
       assertThat(processInstance[0]).isEnded()
 
-    where:
-        a | _ 
-        1 | _
   }
 
-
-def 'Second feature to show missing coverage'( int a, int bb) {
+@Issue("https://github.com/DigitalState/Camunda-Spock-Testing/issues/4")
+def 'Second feature to show missing coverage'( boolean path1, boolean path2) {
     when: 'Starting the process instance'
       // reportInfo "DOGGGs"
       //@TODO Move variable creation and management into its own class.
       def json = S("{\"customer\": \"Kermit\"}")
       def startingVariables = [
                                 'json':json,
-                                'temp': 24
+                                'temp': 24,
+                                'path1': path1,
+                                'path2': path2
                                 ]
       // we assume only one process instance will be returned
       def processInstance = runtimeService().createConditionEvaluation()
@@ -160,7 +171,7 @@ def 'Second feature to show missing coverage'( int a, int bb) {
       // processInstanceQuery() is being exposed as part of:
       // http://camunda.github.io/camunda-bpm-assert/apidocs/org/camunda/bpm/engine/test/assertions/ProcessEngineTests.html
       // See import statement at top of test
-      assertThat(processInstanceQuery().count()).isEqualTo(1)
+      // assertThat(processInstanceQuery().count()).isEqualTo(1)
 
     then: 'Process Variables are:'
     def processVariables = runtimeService().getVariables(executionId)
@@ -171,17 +182,18 @@ def 'Second feature to show missing coverage'( int a, int bb) {
 
     // You can uncomment these lines if you like, but is not needed.
 
-    // then: 'Complete Final User Task (The placeholder user task)'
-    //   assertThat(processInstance[0]).isWaitingAt("Task_0qacez5")
+    // then: 'Complete Final User Task'
+    //   // assertThat(processInstance[0]).isWaitingAt("Task_0qacez5")
     //   complete(task(processInstance[0]))
     
     // then: 'Process has ended'
-    //   assertThat(processInstance[0]).isEnded()
+      // assertThat(processInstance[0]).isEnded()
 
     where:
-        a | bb 
-        22 | 33
-        877 | 99
+        path1 | path2 
+        false | false // Default Flow
+        true  | false // "Do something" Flow
+        false | true  // "Do something else" Flow
   }
 
 
@@ -190,10 +202,19 @@ def 'Second feature to show missing coverage'( int a, int bb) {
   def cleanup(){
           // Get Actvitity Events
     def events = historyService().createHistoricActivityInstanceQuery().processInstanceId(executionId).finished().orderPartiallyByOccurrence().asc().list()
-    def activityEvents = events.findAll{it.activityType != 'sequenceFlow'}.collect {it.activityId}
+    def activityEvents = events.findAll{it.activityType != 'sequenceFlow' && it.activityType != 'multiInstanceBody'}.collect {it.activityId}.countBy {it}
     println '\nExecuted Activity Events:'
     println activityEvents
     reportData['activityInstances'] = JsonOutput.toJson(activityEvents)
+    println reportData['activityInstances']
+
+    // Activity Events That are still active
+    def eventsStillActive = historyService().createHistoricActivityInstanceQuery().processInstanceId(executionId).unfinished().orderPartiallyByOccurrence().asc().list()
+    def activityEventsStillActive = eventsStillActive.findAll{it.activityType != 'sequenceFlow'}.collect {it.activityId}
+    println '\nStill Active Activity Events:'
+    println activityEventsStillActive
+    reportData['activityInstancesStillActive'] = JsonOutput.toJson(activityEventsStillActive)
+
 
     def sequenceFlows = events.findAll{it.activityType == 'sequenceFlow'}.collect {it.activityId}
     println '\nExecuted Sequence Flows:'
@@ -216,12 +237,24 @@ def 'Second feature to show missing coverage'( int a, int bb) {
     def userTasks =  model.getModelElementsByType(org.camunda.bpm.model.bpmn.instance.UserTask.class).collect {it.getId()}
     println userTasks
     reportData['userTasks'] = JsonOutput.toJson(userTasks)
-    // https://docs.camunda.org/javadoc/camunda-bpm-platform/7.8/org/camunda/bpm/engine/RepositoryService.html#deleteDeployment(java.lang.String,%20boolean,%20boolean,%20boolean)
+    
+    println '\nReceive Tasks:'
+    def receiveTasks =  model.getModelElementsByType(org.camunda.bpm.model.bpmn.instance.ReceiveTask.class).collect {it.getId()}
+    println receiveTasks
+    reportData['receiveTasks'] = JsonOutput.toJson(receiveTasks)
+    
+    println '\nIntermediate Catch Events:'
+    def intermediateCatchEvents =  model.getModelElementsByType(org.camunda.bpm.model.bpmn.instance.IntermediateCatchEvent.class).collect {it.getId()}
+    println intermediateCatchEvents
+    reportData['intermediateCatchEvents'] = JsonOutput.toJson(intermediateCatchEvents)
+    
+
 
     reportInfo(reportData.clone())
   }
 
   def cleanupSpec() {
+    // https://docs.camunda.org/javadoc/camunda-bpm-platform/7.8/org/camunda/bpm/engine/RepositoryService.html#deleteDeployment(java.lang.String,%20boolean,%20boolean,%20boolean)
     repositoryService().deleteDeployment(deploymentId, 
                                                  true, // cascade
                                                  true, // skipCustomListeners
