@@ -19,7 +19,7 @@ report {
 
 spockReports {
     set 'com.athaydes.spockframework.report.template.TemplateReportCreator.enabled': true
-    set 'com.athaydes.spockframework.report.testSourceRoots':'src/test/groovy/ConditionalStart'
+    set 'com.athaydes.spockframework.report.testSourceRoots': "src/test/groovy"
     set 'com.athaydes.spockframework.report.showCodeBlocks': true
     set 'com.athaydes.spockframework.report.hideEmptyBlocks': false
 

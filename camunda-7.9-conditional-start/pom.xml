@@ -46,7 +46,7 @@
         <executions>
           <execution>
             <goals>
-              <!-- <goal>compile</goal> -->
+               <goal>compile</goal>
               <goal>testCompile</goal>
             </goals>
           </execution>

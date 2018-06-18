@@ -8,7 +8,7 @@ Root into folder and run: `./mvnw clean test`
 
 Test will run.
 
-You can update the BPMN file in src/test/resources/bpmn/ConditionalStart/conditionalStart.bpmn
+You can update the BPMN file in src/test/resources/bpmn/conditionalstart/conditionalStart.bpmn
 
 
 

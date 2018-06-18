@@ -31,23 +31,23 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.1/sketchy/bootstrap.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.1/litera/bootstrap.min.css" crossorigin="anonymous">
     
     <title>BPMN Unit Test</title>
     
-    <style>
+    <style>        
         /* Element Highlight (not sequence flows) */
         .highlight:not(.djs-connection) .djs-visual > :nth-child(1) {
-        fill: rgba(32, 216, 32, 0.63) !important; /* color elements as green */
+            fill: rgba(32, 216, 32, 0.63) !important; /* color elements as green */
         }
 
         /* Element Highlight (not sequence flows) */
         .highlight-running:not(.djs-connection) .djs-visual > :nth-child(1) {
-        fill: rgba(32, 81, 216, 0.63) !important; /* color elements as blue */
+            fill: rgba(32, 81, 216, 0.63) !important; /* color elements as blue */
         }
         /* Seqence Flow Highlight */
         .highlight-connection.djs-connection .djs-visual > :nth-child(1) {
-        stroke: rgba(24, 155, 24, 0.822) !important;
+            stroke: rgba(24, 155, 24, 0.822) !important;
         }
 
         .transaction-boundary {
@@ -78,10 +78,10 @@
         }
 
         pre code {
-        background-color: #f6f8fa;
-        border: 1px solid #f6f8fa;
-        display: block;
-        padding: 20px;
+            background-color: #f6f8fa;
+            border: 1px solid #f6f8fa;
+            display: block;
+            padding: 20px;
         }
 
         .activity-instance-count{
@@ -105,13 +105,21 @@
   }
 
 
-  def buildCoverage = { featureName = '', xml = '', userTasks = [], activityInstances =[], executedSequenceFlows =[], asyncData =[], receiveTasks =[], intermediateCatchEvents =[], activityInstancesStillActive =[] ->
+  def buildCoverage = { featureName = '',
+                        xml = '',
+                        userTasks = [],
+                        activityInstances =[],
+                        executedSequenceFlows =[],
+                        asyncData =[],
+                        receiveTasks =[],
+                        intermediateCatchEvents =[],
+                        activityInstancesStillActive =[] ->
 
     def html = $/
-<div id="diagram-${featureName}" style="height: 500px"></div>
+<div id="diagram${featureName}" style="height: 500px"></div>
 
 <!-- viewer -->
-<script src="https://unpkg.com/bpmn-js@2.1.0/dist/bpmn-viewer.development.js"></script>
+<script src="https://unpkg.com/bpmn-js@2.1.0/dist/bpmn-navigated-viewer.development.js"></script>
 
 <!-- jquery (required for example only) -->
 <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.js"></script>
@@ -121,7 +129,7 @@
 
 function showDiagram_${featureName}() {
     var viewer = new BpmnJS({
-        container: '#diagram-${featureName}'
+        container: '#diagram${featureName}'
         });
     var diagramXML = '${xml}' // Wrapped in quotes to ensure XML is a string
     var userTasks = ${userTasks}
@@ -138,7 +146,7 @@ function showDiagram_${featureName}() {
         canvas = viewer.get('canvas'),
         elementRegistry = viewer.get('elementRegistry');
         
-        // canvas.zoom('fit-viewport');
+         canvas.zoom('fit-viewport');
     
     for (var key in activityInstances) {
         var activityInstance = key;
@@ -252,13 +260,13 @@ showDiagram_${featureName}();
 <% // Report Title
     out << '<div class="row">'
     
-    out << '<div class="col">'
+    out << '<div class="col-xl">'
     out << "<h1>Report for ${utils.getSpecClassName(data)}</h1>"
     out << '</div>'
 
-    out << '<div class="col-2">'
-    out << '<img class="float-right mx-2 my-2" src="../test-classes/templateReportCreator/logo.png" width="200px" />'
-    out << '<img class="float-right mx-2 my-2" src="../test-classes/templateReportCreator/camunda.png" width="200px" />'
+    out << '<div class="col-xs">'
+    out << '<img class="mx-2 my-2" src="../test-classes/templateReportCreator/logo.png" width="200px" />'
+    out << '<img class="mx-2 my-2" src="../test-classes/templateReportCreator/camunda.png" width="200px" />'
     out << '</div>'
 
     out << '</div>'
@@ -306,7 +314,7 @@ showDiagram_${featureName}();
     } 
 %>
 
-<% // Spec Narative
+<% // Spec Narrative
     def specNarrative = data.getInfo().getNarrative()  
     if (specNarrative != null){
         out << '<div class="row"> <div class="col-8">'
@@ -315,21 +323,22 @@ showDiagram_${featureName}();
         // out << '<pre>'
         // Also provides a example of a split based on new lines within the test
         // Spilt can be reused for things like a multi-line @Title etc 
+        out << '<blockquote class="blockquote mx-2">'
         specNarrative.split('\n').each { 
-            out << '<p>' << it << '</p>' 
+            out << '<p class="mb-0">' << it << '</p>' 
             }
         // out << '</pre>'
-
+        out << '</blockquote>'
         out << '</div></div>'
     }
 %>
 
 <% // @See and @Issue Spec Annotations Two Column Row
     // Creates a Single Row for Both Spec @Issue and Spec @See Annotations
-    // Row is alows in Spec @See Annotion below
+    // Row is allows in Spec @See Annotation below
     out << '<div class="row"><div class="col"><h2>Additional Spec Context:</h2></div></div>'
     out << '<div class="row">'
-    out << '<div class="col-4">'
+    out << '<div class="col-md">'
 %>
 <% // Spec Issue Annotation
     def specIssueAnnotation = data.getInfo().getAnnotation(spock.lang.Issue)?.value()
@@ -354,7 +363,7 @@ showDiagram_${featureName}();
 %>
 
 <% // Second Column of Spec Annotations
-    out << '<div class="col-4">'
+    out << '<div class="col-md">'
 %>
 <% // Spec See Annotation
     def specSeeAnnotation = data.getInfo().getAnnotation(spock.lang.See)?.value()
@@ -380,7 +389,7 @@ showDiagram_${featureName}();
 %>
 
 <% // Initial Setup of All Feature Iterations
-  features.eachFeature { name, result, blocks, iterations, params ->
+    features.eachFeature { name, result, blocks, iterations, params ->
 %>
 
 <% // Build Feature Name print-out
@@ -397,7 +406,7 @@ showDiagram_${featureName}();
     // Row is alows in Feature @See Annotion below
     out << '<div class="row"><div class="col"><h3>Additional Feature Context:</h3></div></div>'
     out << '<div class="row">'
-    out << '<div class="col">'
+    out << '<div class="col-md">'
 %>
 <% // Feature Issue Annotation
     def issueAnnotation = getFeatureMethod().getAnnotation(spock.lang.Issue)?.value()
@@ -417,12 +426,12 @@ showDiagram_${featureName}();
         out << '</table>'
     }
 %>
-<% // Close of Div for col-4 of @Issue Feature Annotation
+<% // Close of Div for col of @Issue Feature Annotation
     out << '</div>'
 %>
 
 <% // Second Column of Feature Annotations
-    out << '<div class="col">'
+    out << '<div class="col-md">'
 %>
 <% // Feature See Annotation
     def seeAnnotation = getFeatureMethod().getAnnotation(spock.lang.See)?.value()
@@ -449,27 +458,75 @@ showDiagram_${featureName}();
 
 
 <% // Build BPMN-JS Coverage 
-    if ( utils.isUnrolled( delegate ) ) {
-        // @TODO Make unRolled work
-        // Current does not work
-        buildCoverage( utils.nextSpecExtraInfo( data )['bpmnModel'] )
+    if (utils.isUnrolled(delegate)) {
+        out << '<div class="row"> <div class="col">'
+
+        out << "<h3>Feature Coverage Overview:</h3>"
+        ArrayList coverageData = utils.nextSpecExtraInfo( data )
+        // println metaClass.methods*.name.sort().unique()  
+        coverageData.findAll{it.getClass() == io.digitalstate.camunda.coverage.CoverageData.class}.each {
+//            it = (CoverageData) it
+            out << "<h4>Coverage: ${it.name}</h4>"
+            buildCoverage("${UUID.randomUUID().toString().replaceAll("\\W", "")}",
+                    it.bpmnModel,
+                    groovy.json.JsonOutput.toJson(it.modelUserTasks),
+                    groovy.json.JsonOutput.toJson(it.activityInstancesFinished),
+                    groovy.json.JsonOutput.toJson(it.sequenceFlowsFinished),
+                    groovy.json.JsonOutput.toJson(it.modelAsyncData),
+                    groovy.json.JsonOutput.toJson(it.modelReceiveTasks),
+                    groovy.json.JsonOutput.toJson(it.modelIntermediateCatchEvents),
+                    groovy.json.JsonOutput.toJson(it.activityInstancesUnfinished)
+            )
+        }
+
+//            buildCoverage(  "${UUID.randomUUID().toString().replaceAll("\\W", "")}",
+//                    coverageData[0]['bpmnModel'],
+//                    coverageData[0]['userTasks'],
+//                    coverageData[0]['activityInstances'],
+//                    coverageData[0]['executedSequenceFlows'],
+//                    coverageData[0]['asyncData'],
+//                    coverageData[0]['receiveTasks'],
+//                    coverageData[0]['intermediateCatchEvents'],
+//                    coverageData[0]['activityInstancesStillActive']
+//            )
+
+        out << '</div></div>'
+
     } else {
         (1..iterations.size()).each {
-            out << '<div class="row"> <div class="col-12">'
+            out << '<div class="row"> <div class="col">'
 
             out << "<h3>Feature Coverage Overview: Iteration: ${it}</h3>"
-            def coverageData = utils.nextSpecExtraInfo( data )
+            ArrayList coverageData = utils.nextSpecExtraInfo( data )
+            // println metaClass.methods*.name.sort().unique()
+            coverageData.findAll{it.getClass() == io.digitalstate.camunda.coverage.CoverageData.class}.each {
+//                it = (CoverageData) it
+                out << "<h4>Coverage: ${it.name}</h4>"
+                buildCoverage("${UUID.randomUUID().toString().replaceAll("\\W", "")}",
+                        it.bpmnModel,
+                        groovy.json.JsonOutput.toJson(it.modelUserTasks),
+                        groovy.json.JsonOutput.toJson(it.activityInstancesFinished),
+                        groovy.json.JsonOutput.toJson(it.sequenceFlowsFinished),
+                        groovy.json.JsonOutput.toJson(it.modelAsyncData),
+                        groovy.json.JsonOutput.toJson(it.modelReceiveTasks),
+                        groovy.json.JsonOutput.toJson(it.modelIntermediateCatchEvents),
+                        groovy.json.JsonOutput.toJson(it.activityInstancesUnfinished)
+                )
+            }
 
-            buildCoverage(  "${name.replaceAll("\\s","")}${it}",
-                            coverageData[0]['bpmnModel'].replaceAll("[\n\r]", ""),
-                            coverageData[0]['userTasks'],
-                            coverageData[0]['activityInstances'],
-                            coverageData[0]['executedSequenceFlows'],
-                            coverageData[0]['asyncData'],
-                            coverageData[0]['receiveTasks'],
-                            coverageData[0]['intermediateCatchEvents'],
-                            coverageData[0]['activityInstancesStillActive']
-                            )
+
+//            def coverageData = utils.nextSpecExtraInfo( data )
+//
+//            buildCoverage(  "${UUID.randomUUID().toString().replaceAll("\\W", "")}",
+//                            coverageData[0]['bpmnModel'].replaceAll("[\n\r]", ""),
+//                            coverageData[0]['userTasks'],
+//                            coverageData[0]['activityInstances'],
+//                            coverageData[0]['executedSequenceFlows'],
+//                            coverageData[0]['asyncData'],
+//                            coverageData[0]['receiveTasks'],
+//                            coverageData[0]['intermediateCatchEvents'],
+//                            coverageData[0]['activityInstancesStillActive']
+//                            )
             
             out << '</div></div>'
         } // End of .each loop
@@ -477,7 +534,7 @@ showDiagram_${featureName}();
 %>
 
 <% // Feature Result
-    out << '<div class="row"> <div class="col-8">'
+    out << '<div class="row"> <div class="col-sm">'
 
     out << "<h3>Feature Test Results:</h3>"
     if (result == 'PASS') {
@@ -499,10 +556,10 @@ showDiagram_${featureName}();
 %>
 
 <% // Feature Statement blocks (+code blocks)
-    out << '<div class="row"> <div class="col-8">'
+    out << '<div class="row"> <div class="col-lg">'
 
     for ( block in blocks ) {
-        out << '<details><summary class="text-primary">'
+        out << '<details class="my-2"><summary class="text-primary">'
         out << "<strong class=\"text-muted\">${block.kind}</strong>  ${block.text}"
         out << '</summary>'
         
@@ -523,18 +580,20 @@ showDiagram_${featureName}();
 <% // Iterations Data Table + Pass/Fail result of each iteration
     def executedIterations = iterations.findAll { it.dataValues || it.errors }
     if (params && executedIterations) {
-        out << '<div class="row"> <div class="col-8">'
+        out << '<div class="row"> <div class="col-lg">'
 
-        out << '<table class="table table-borderless">'
+        out << '<table class="table table-borderless table-hover">'
         
         // Build Header Row
+        out << '<thead>'
         out << '<tr>'
-        out << '<th class="text-primary" scope="col"> Iteration </th>'
+        out << '<th class="text-muted" scope="col"> Iteration </th>'
         params.each {
-            out << '<th class="text-info" scope="col">' << it << '</th>'
+            out << '<th class="text-primary" scope="col">' << it << '</th>'
         }
-        out << '<th class="text-primary" scope="col"> Result </th>'
+        out << '<th class="text-muted" scope="col"> Result </th>'
         out << '</tr>'
+        out << '</thead>'
         
         // Build Data Rows:
         String failText = "FAIL"
@@ -542,26 +601,31 @@ showDiagram_${featureName}();
         // indexPlusOne was created so the iteration count starts at '1' rather than '0'
         // This was done because business users understand 'Interation 1' as the 
         // first iteration rather than 'Iteration 0'
+        
+        out << '<tbody>'
         executedIterations.eachWithIndex { iteration, index, indexPlusOne = index + 1 ->
-            if (iteration.errors){
-                out << '<tr class="table-danger">'
-            } else {
+            // if (iteration.errors){
+                // out << '<tr class="table-danger">'
+            // } else {
                 out << '<tr>'
-            }
+            // }
 
-            out << "<td class=\"text-primary\">${indexPlusOne}</td>"
+            out << "<td class=\"text-muted\">${indexPlusOne}</td>"
 
             iteration.dataValues.each {
-                out << "<td class=\"text-info\">${it}</td>"
+                out << "<td class=\"text-primary\">${it}</td>"
             }
             if (iteration.errors) {
-                out << "<td>${failText}</td>"
+                // out << "<td class=\"text-danger\">${failText}</td>"
+                out << "<td><span class=\"badge badge-danger\">${failText}</span></td>"
             } else {
-                out << "<td>${passText}</td>"
+                // out << "<td>${passText}</td>"
+                out << "<td><span class=\"badge badge-success\">${passText}</span></td>"
             }
             out << '</tr>'
         }
         out << '<caption>Blue text are Data Table variables</caption>'
+        out << '</tbody>'
         out << '</table>'
 
         out << '</div></div>'
@@ -571,7 +635,7 @@ showDiagram_${featureName}();
 <% // Feature Issues/Problems Listing
     def problems = executedIterations.findAll { it.errors }
     if ( problems ) {
-        out << '<div class="row"> <div class="col-10">'
+        out << '<div class="row"> <div class="col-xl">'
 
         out << "<h4>The following problems occurred:</h4>"
         for ( badIteration in problems ) {
