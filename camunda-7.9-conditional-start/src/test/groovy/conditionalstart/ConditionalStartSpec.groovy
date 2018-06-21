@@ -81,14 +81,14 @@ class ConditionalStartSpec extends Specification {
   def setupSpec(){
     // https://docs.camunda.org/javadoc/camunda-bpm-platform/7.8/org/camunda/bpm/engine/repository/DeploymentBuilder.html
     BpmnModelInstance baseModel = Bpmn.readModelFromStream(resourceStream('bpmn/conditionalstart/conditionalStart.bpmn'))
-    BpmnModelInstance preppedModel = setupSequenceFlowListeners(baseModel, 'deployment://flownode.js', 'javascript')
+    BpmnModelInstance preppedModel = setupSequenceFlowListeners(baseModel, 'deployment://sequenceFlowHistoryEventGenerator.js', 'javascript')
     reportData['bpmnModel'] = Bpmn.convertToString((BpmnModelInstance)preppedModel)
     def deployment = repositoryService().createDeployment()
                                         .addModelInstance('conditionalStart.bpmn', preppedModel)
                                         // .addInputStream('conditionalStart.bpmn', resourceStream('bpmn/conditionalstart/conditionalStart.bpmn'))
                                         .addInputStream('script1.js', resourceStream('bpmn/conditionalstart/script1.js'))
                                         .addInputStream('script2.js', resourceStream('bpmn/conditionalstart/script2.js'))
-                                        .addInputStream('flownode.js', resourceStream('bpmn/conditionalstart/flownode.js'))
+                                        .addInputStream('sequenceFlowHistoryEventGenerator.js', resourceStream('bpmn/conditionalstart/sequenceFlowHistoryEventGenerator.js'))
                                         .name('conditionalstart')
                                         .enableDuplicateFiltering(false)
                                         .deploy()

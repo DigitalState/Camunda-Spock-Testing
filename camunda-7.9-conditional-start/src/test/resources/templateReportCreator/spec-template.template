@@ -13,7 +13,6 @@
     }
     writeHeaders( utils.specHeaders( data ) )
     // writeTagOrAttachment data.info
-
 %>
 
 <%
@@ -341,8 +340,6 @@ showDiagram_${featureName}();
     out << '<div class="col-md">'
 %>
 <% // Spec Issue Annotation
-    def specIssueAnnotation = data.getInfo().getAnnotation(spock.lang.Issue)?.value()
-
     if (specIssueAnnotation != null){
         out << '<table class="table table-sm table-borderless">'
         out << '<tr>'

@@ -29,11 +29,11 @@ class BpmnCoverageBuilder {
         return resourceStream("io/digitalstate/camunda/coverage/${sequenceFlowHistoryFileName()}")
     }
     static String sequenceFlowHistoryFileName(){
-        return "flownode.js"
+        return "sequenceFlowHistoryEventGenerator.js"
     }
 
     static BpmnModelInstance prepModelForCoverage( String modelPath,
-                                                   String scriptResource = 'deployment://flownode.js',
+                                                   String scriptResource = 'deployment://sequenceFlowHistoryEventGenerator.js',
                                                    String scriptFormat = 'javascript') {
 
        InputStream resource = resourceStream(modelPath)

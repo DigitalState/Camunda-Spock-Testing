@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.14.0">
+  <bpmn:process id="HamTest" name="Hamcrest Tests" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1ugw7xf" name="Start">
+      <bpmn:outgoing>SequenceFlow_1tp4csa</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_01sw841</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1tp4csa" name="Path 2" sourceRef="StartEvent_1ugw7xf" targetRef="Task_1qb2k3a" />
+    <bpmn:sequenceFlow id="SequenceFlow_01sw841" name="Path 1" sourceRef="StartEvent_1ugw7xf" targetRef="Task_1qb2k3a" />
+    <bpmn:endEvent id="EndEvent_10ag13t" name="End">
+      <bpmn:incoming>SequenceFlow_03fb732</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1hpcyu6" name="Final Path" sourceRef="Task_1qb2k3a" targetRef="IntermediateThrowEvent_0no7ze0" />
+    <bpmn:manualTask id="Task_1qb2k3a" name="Do Something">
+      <bpmn:incoming>SequenceFlow_1tp4csa</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_01sw841</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1hpcyu6</bpmn:outgoing>
+    </bpmn:manualTask>
+    <bpmn:sequenceFlow id="SequenceFlow_03fb732" sourceRef="IntermediateThrowEvent_0no7ze0" targetRef="EndEvent_10ag13t" />
+    <bpmn:intermediateCatchEvent id="IntermediateThrowEvent_0no7ze0">
+      <bpmn:incoming>SequenceFlow_1hpcyu6</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_03fb732</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_1uudc2w" />
+    </bpmn:intermediateCatchEvent>
+  </bpmn:process>
+  <bpmn:message id="Message_1uudc2w" />
+  <bpmn:message id="Message_0gyzbq3" name="5555" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="HamTest">
+      <bpmndi:BPMNShape id="StartEvent_1ugw7xf_di" bpmnElement="StartEvent_1ugw7xf">
+        <dc:Bounds x="76" y="85" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="46" y="97" width="24" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1tp4csa_di" bpmnElement="SequenceFlow_1tp4csa">
+        <di:waypoint x="94" y="121" />
+        <di:waypoint x="94" y="188" />
+        <di:waypoint x="295" y="188" />
+        <di:waypoint x="295" y="143" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="179" y="167" width="32" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_01sw841_di" bpmnElement="SequenceFlow_01sw841">
+        <di:waypoint x="94" y="85" />
+        <di:waypoint x="94" y="24" />
+        <di:waypoint x="295" y="24" />
+        <di:waypoint x="295" y="63" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="179" y="3" width="32" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_10ag13t_di" bpmnElement="EndEvent_10ag13t">
+        <dc:Bounds x="615" y="85" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="623" y="124" width="20" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1hpcyu6_di" bpmnElement="SequenceFlow_1hpcyu6">
+        <di:waypoint x="345" y="103" />
+        <di:waypoint x="518" y="103" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="407" y="82" width="50" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ManualTask_0fc3c5o_di" bpmnElement="Task_1qb2k3a">
+        <dc:Bounds x="245" y="63" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_03fb732_di" bpmnElement="SequenceFlow_03fb732">
+        <di:waypoint x="554" y="103" />
+        <di:waypoint x="615" y="103" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="584.5" y="81.5" width="0" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_0rsve1a_di" bpmnElement="IntermediateThrowEvent_0no7ze0">
+        <dc:Bounds x="518" y="85" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="535.5" y="124" width="0" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,6 +1,7 @@
 package conditionalstart
 
 import org.junit.ClassRule
+import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -19,6 +20,7 @@ import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*
 
 import static org.camunda.spin.Spin.S
 
+@Ignore
 class CallActivitySingleFeatureSpec extends Specification  {
 
   @ClassRule

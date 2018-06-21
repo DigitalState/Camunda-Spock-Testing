@@ -14,6 +14,5 @@ historicActivityInstance.setDurationInMillis(0)
 historicActivityInstance.setProcessDefinitionId(execution.getProcessDefinitionId())
 historicActivityInstance.setProcessInstanceId(execution.getProcessInstanceId())
 
-// https://docs.camunda.org/javadoc/camunda-bpm-platform/7.9/org/camunda/bpm/engine/impl/history/handler/DbHistoryEventHandler.html
-var historyHandler = Java.type('org.camunda.bpm.engine.impl.history.handler.DbHistoryEventHandler');
-(new historyHandler).handleEvent(historicActivityInstance)
+var historyHandler = execution.getProcessEngineServices().getProcessEngineConfiguration().getHistoryEventHandler()
+historyHandler.handleEvent(historicActivityInstance)
