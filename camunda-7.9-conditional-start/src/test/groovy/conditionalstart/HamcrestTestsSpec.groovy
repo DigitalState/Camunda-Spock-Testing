@@ -4,14 +4,22 @@ import org.camunda.bpm.model.bpmn.BpmnModelInstance
 import org.hamcrest.Matchers
 import org.hamcrest.collection.IsMapContaining
 import org.hamcrest.core.Every
+import org.hamcrest.core.IsNot
+import org.hamcrest.core.StringContains
+import org.junit.Assert
+import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 
 import io.digitalstate.camunda.coverage.bpmnSequenceFlows
 import io.digitalstate.camunda.coverage.bpmnMessageEvents
+
+import java.util.stream.Collectors
+
 import static io.digitalstate.camunda.coverage.BpmnCoverageBuilder.*
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*
 
+@Ignore
 class HamcrestTestsSpec extends Specification{
 
   @Shared BpmnModelInstance model
@@ -35,7 +43,9 @@ class HamcrestTestsSpec extends Specification{
       List<Map<String, String>> catchEvents = model.getintermediateCatchEvents()
 //      assertThat (catchEvents).extracting()
 //      model.assertIntermediateCatchEventsAreConfigured()
-//      assertThat(catchEvents, Every.everyItem(IsMapContaining)
+      assertThat(catchEvents).allSatisfy {elm ->
+        assertThat(elm).hasNoNullFieldsOrProperties()
+      }
 
   }
 }

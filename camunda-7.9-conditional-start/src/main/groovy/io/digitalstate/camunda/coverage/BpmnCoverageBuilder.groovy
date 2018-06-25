@@ -2,6 +2,9 @@ package io.digitalstate.camunda.coverage
 
 import groovy.json.JsonOutput
 import org.camunda.bpm.engine.ProcessEngine
+import org.camunda.bpm.engine.history.HistoricActivityInstance
+import org.camunda.bpm.engine.history.HistoricDetail
+import org.camunda.bpm.engine.history.HistoricVariableInstance
 import org.camunda.bpm.engine.runtime.ProcessInstance
 import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.BpmnModelInstance
@@ -12,6 +15,7 @@ import org.camunda.bpm.model.bpmn.instance.UserTask
 import org.camunda.bpm.model.bpmn.instance.camunda.CamundaExecutionListener
 import org.camunda.bpm.model.bpmn.instance.camunda.CamundaScript
 import org.camunda.bpm.model.bpmn.instance.FlowNode
+import groovy.json.StringEscapeUtils
 
 class BpmnCoverageBuilder {
 //    ProcessEngine processEngine
@@ -133,9 +137,27 @@ class BpmnCoverageBuilder {
 //        reportData['intermediateCatchEvents'] = JsonOutput.toJson(intermediateCatchEvents)
         coverageData.modelIntermediateCatchEvents = intermediateCatchEvents
 
-//        reportData['bpmnModel'] = Bpmn.convertToString(model).replaceAll("[\n\r]", "")
-        coverageData.bpmnModel = Bpmn.convertToString(model).replaceAll("[\n\r]", "")
+//        coverageData.bpmnModel = Bpmn.convertToString(model).replaceAll("[\n\r]", "")
+        coverageData.bpmnModel = StringEscapeUtils.escapeJavaScript(Bpmn.convertToString(model))
+
+
+//      Generate Variable Usage / Dataflow data
+        Collection<HistoricDetail> variableHistory = processEngine.getHistoryService().createHistoricDetailQuery()
+                                                                                .processInstanceId(processInstanceId)
+                                                                                .disableBinaryFetching()
+                                                                                .variableUpdates()
+                                                                                .list()
+
+        List<Map<String, Object>> activityVariableMappings = variableHistory.collect { historyItem ->
+            [('activityId'): processEngine.getHistoryService().createHistoricActivityInstanceQuery()
+                                            .processInstanceId(processInstanceId)
+                                            .activityInstanceId(historyItem.getActivityInstanceId())
+                                            .singleResult().getActivityId(),
+             ('variableInstance') : historyItem.toString()
+            ]
+        }
+        coverageData.activityInstanceVariableMapping = activityVariableMappings
+        println activityVariableMappings
         return coverageData
-//        return reportData
     }
 }

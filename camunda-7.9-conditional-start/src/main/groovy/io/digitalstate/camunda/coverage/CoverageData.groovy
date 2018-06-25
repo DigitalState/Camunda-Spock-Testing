@@ -15,7 +15,9 @@ class CoverageData extends Object {
     public ArrayList modelUserTasks
     public ArrayList modelReceiveTasks
     public ArrayList modelIntermediateCatchEvents
+    public ArrayList activityInstanceVariableMapping
 
 }
 
 // @TODO make ActivityInstancesUnfinished track the counts of active instances per ActivityId
+// @TODO make activityInstanceVariableMapping have a count value of the number of variable activity

@@ -31,6 +31,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.1/litera/bootstrap.min.css" crossorigin="anonymous">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     
     <title>BPMN Unit Test</title>
     
@@ -94,6 +95,17 @@
             min-width: 15px;
             text-align: center;
         }
+
+        .activity-instance-variable-execution{
+            color: rgba(5, 163, 5, 0.900);
+            border-radius: 5px;
+            font-family: Arial;
+            font-size: 15px;
+            padding: 3px;
+            min-height: 15px;
+            min-width: 15px;
+            text-align: center;
+        }
     </style>
     </head>
 
@@ -112,7 +124,8 @@
                         asyncData =[],
                         receiveTasks =[],
                         intermediateCatchEvents =[],
-                        activityInstancesStillActive =[] ->
+                        activityInstancesStillActive =[],
+                        activityInstanceVariableMapping =[] ->
 
     def html = $/
 <div id="diagram${featureName}" style="height: 500px"></div>
@@ -138,6 +151,7 @@ function showDiagram_${featureName}() {
     var receiveTasks = ${receiveTasks}
     var intermediateCatchEvents = ${intermediateCatchEvents}
     var activityInstancesStillActive = ${activityInstancesStillActive}
+    var activityInstanceVariableMapping = ${activityInstanceVariableMapping}
 
 
     viewer.importXML(diagramXML, function() {
@@ -147,6 +161,7 @@ function showDiagram_${featureName}() {
         
          canvas.zoom('fit-viewport');
     
+    // Count of Activity Instance activation
     for (var key in activityInstances) {
         var activityInstance = key;
         canvas.addMarker(activityInstance, 'highlight');
@@ -156,6 +171,19 @@ function showDiagram_${featureName}() {
                         right: 0
                     },
                     html: '<div class="activity-instance-count">' + activityInstances[key] + '</div>'
+                    });
+    }
+    
+    // Variable Execution Instances
+    for (var i = 0; i < activityInstanceVariableMapping.length; i++) {
+        var varMapping = activityInstanceVariableMapping[i]['activityId'];
+        console.log(activityInstanceVariableMapping[i]['activityId'])
+        overlays.add(varMapping, {
+                    position: {
+                        top: -15,
+                        right: 0
+                    },
+                    html: '<div class="activity-instance-variable-execution">' + '<i class="fa fa-pencil-square-o"></i>' +'</div>'
                     });
     }
 
@@ -340,6 +368,7 @@ showDiagram_${featureName}();
     out << '<div class="col-md">'
 %>
 <% // Spec Issue Annotation
+    def specIssueAnnotation = data.getInfo().getAnnotation(spock.lang.Issue)?.value()
     if (specIssueAnnotation != null){
         out << '<table class="table table-sm table-borderless">'
         out << '<tr>'
@@ -472,21 +501,10 @@ showDiagram_${featureName}();
                     groovy.json.JsonOutput.toJson(it.modelAsyncData),
                     groovy.json.JsonOutput.toJson(it.modelReceiveTasks),
                     groovy.json.JsonOutput.toJson(it.modelIntermediateCatchEvents),
-                    groovy.json.JsonOutput.toJson(it.activityInstancesUnfinished)
+                    groovy.json.JsonOutput.toJson(it.activityInstancesUnfinished),
+                    groovy.json.JsonOutput.toJson(it.activityInstanceVariableMapping)
             )
         }
-
-//            buildCoverage(  "${UUID.randomUUID().toString().replaceAll("\\W", "")}",
-//                    coverageData[0]['bpmnModel'],
-//                    coverageData[0]['userTasks'],
-//                    coverageData[0]['activityInstances'],
-//                    coverageData[0]['executedSequenceFlows'],
-//                    coverageData[0]['asyncData'],
-//                    coverageData[0]['receiveTasks'],
-//                    coverageData[0]['intermediateCatchEvents'],
-//                    coverageData[0]['activityInstancesStillActive']
-//            )
-
         out << '</div></div>'
 
     } else {
@@ -507,23 +525,10 @@ showDiagram_${featureName}();
                         groovy.json.JsonOutput.toJson(it.modelAsyncData),
                         groovy.json.JsonOutput.toJson(it.modelReceiveTasks),
                         groovy.json.JsonOutput.toJson(it.modelIntermediateCatchEvents),
-                        groovy.json.JsonOutput.toJson(it.activityInstancesUnfinished)
+                        groovy.json.JsonOutput.toJson(it.activityInstancesUnfinished),
+                        groovy.json.JsonOutput.toJson(it.activityInstanceVariableMapping)
                 )
             }
-
-
-//            def coverageData = utils.nextSpecExtraInfo( data )
-//
-//            buildCoverage(  "${UUID.randomUUID().toString().replaceAll("\\W", "")}",
-//                            coverageData[0]['bpmnModel'].replaceAll("[\n\r]", ""),
-//                            coverageData[0]['userTasks'],
-//                            coverageData[0]['activityInstances'],
-//                            coverageData[0]['executedSequenceFlows'],
-//                            coverageData[0]['asyncData'],
-//                            coverageData[0]['receiveTasks'],
-//                            coverageData[0]['intermediateCatchEvents'],
-//                            coverageData[0]['activityInstancesStillActive']
-//                            )
             
             out << '</div></div>'
         } // End of .each loop

@@ -148,12 +148,20 @@
       <artifactId>camunda-template-engines-freemarker</artifactId>
     </dependency>
 
-    <!-- camunda BPM assert -->
+     <!--camunda BPM assert-->
     <dependency>
       <groupId>org.camunda.bpm.extension</groupId>
       <artifactId>camunda-bpm-assert</artifactId>
       <scope>provided</scope>
     </dependency>
+
+    <!--<dependency>-->
+      <!--<groupId>org.assertj</groupId>-->
+      <!--<artifactId>assertj-core</artifactId>-->
+      <!--&lt;!&ndash; use 2.9.1 for Java 7 projects &ndash;&gt;-->
+      <!--<version>3.10.0</version>-->
+      <!--<scope>test</scope>-->
+    <!--</dependency>-->
 
     <!-- database -->
     <dependency>

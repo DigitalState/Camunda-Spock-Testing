@@ -17,7 +17,6 @@ import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.*
 
 import static io.digitalstate.camunda.coverage.BpmnCoverageBuilder.*
 
-@Ignore
 @Stepwise
 class CallActivitySpec extends Specification  {
 
