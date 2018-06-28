@@ -3,20 +3,14 @@ package bpmnqa
 import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.BpmnModelInstance
 
-import org.camunda.bpm.model.bpmn.instance.MessageEventDefinition
-import org.camunda.bpm.model.bpmn.instance.camunda.CamundaConnector
+import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static bpmnqa.bpmnEvents.externalEventIsConfigured
-import static spock.util.matcher.HamcrestSupport.that
-import static spock.util.matcher.HamcrestSupport.expect
-import static org.hamcrest.CoreMatchers.*
 import bpmnqa.bpmnEvents
-import static bpmnqa.bpmnEvents.*
 
-
+@Ignore
 class HamcrestTestsSpec extends Specification implements bpmnEvents{
 
   @Shared BpmnModelInstance model
@@ -45,4 +39,3 @@ class HamcrestTestsSpec extends Specification implements bpmnEvents{
   }
 
 }
-

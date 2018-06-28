@@ -68,6 +68,11 @@
     <bpmn:boundaryEvent id="boundary-non-throw" cancelActivity="false" attachedToRef="Task_06shnze">
       <bpmn:messageEventDefinition messageRef="Message_1jggs9q" />
     </bpmn:boundaryEvent>
+    <bpmn:startEvent id="StartEvent_0ii048j" name="My Start Timer">
+      <bpmn:timerEventDefinition>
+        <bpmn:timeCycle xsi:type="bpmn:tFormalExpression">0 0 1,5,10,15,20 1 * ? *</bpmn:timeCycle>
+      </bpmn:timerEventDefinition>
+    </bpmn:startEvent>
   </bpmn:process>
   <bpmn:message id="Message_1uudc2w" />
   <bpmn:message id="Message_0gyzbq3" name="5555" />
@@ -220,6 +225,12 @@
         <dc:Bounds x="310" y="238" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="282" y="277" width="90" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_080979c_di" bpmnElement="StartEvent_0ii048j">
+        <dc:Bounds x="855" y="466" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="837" y="504" width="72" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
