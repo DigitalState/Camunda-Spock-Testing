@@ -4,11 +4,13 @@ import bpmnqa.bpmnTimers
 import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.BpmnModelInstance
 import org.camunda.bpm.model.bpmn.instance.TimerEventDefinition
+import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 
 import java.text.SimpleDateFormat
 
+@Ignore
 class TimerEventsSpec extends Specification implements bpmnTimers{
 
   @Shared BpmnModelInstance model

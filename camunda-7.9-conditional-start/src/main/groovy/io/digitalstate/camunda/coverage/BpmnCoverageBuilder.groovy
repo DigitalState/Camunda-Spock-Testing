@@ -10,6 +10,7 @@ import org.camunda.bpm.model.bpmn.Bpmn
 import org.camunda.bpm.model.bpmn.BpmnModelInstance
 import org.camunda.bpm.model.bpmn.instance.IntermediateCatchEvent
 import org.camunda.bpm.model.bpmn.instance.ReceiveTask
+import org.camunda.bpm.model.bpmn.instance.ServiceTask
 import org.camunda.bpm.model.bpmn.instance.SequenceFlow
 import org.camunda.bpm.model.bpmn.instance.UserTask
 import org.camunda.bpm.model.bpmn.instance.camunda.CamundaExecutionListener
@@ -133,8 +134,12 @@ class BpmnCoverageBuilder {
 //        reportData['receiveTasks'] = JsonOutput.toJson(receiveTasks)
         coverageData.modelReceiveTasks = receiveTasks
 
+        def externalTasks =  model.getModelElementsByType(ServiceTask.class).findAll {it.getCamundaType() == 'external'}.collect {it.getId()}
+        coverageData.modelExternalTasks = externalTasks
+
         def intermediateCatchEvents =  model.getModelElementsByType(IntermediateCatchEvent.class).collect {it.getId()}
 //        reportData['intermediateCatchEvents'] = JsonOutput.toJson(intermediateCatchEvents)
+//        println intermediateCatchEvents
         coverageData.modelIntermediateCatchEvents = intermediateCatchEvents
 
 //        coverageData.bpmnModel = Bpmn.convertToString(model).replaceAll("[\n\r]", "")
@@ -157,7 +162,7 @@ class BpmnCoverageBuilder {
             ]
         }
         coverageData.activityInstanceVariableMapping = activityVariableMappings
-        println activityVariableMappings
+//        println activityVariableMappings
         return coverageData
     }
 }

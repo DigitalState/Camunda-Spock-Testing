@@ -13,6 +13,7 @@ class CoverageData extends Object {
     public ArrayList sequenceFlowsFinished
     public ArrayList modelAsyncData
     public ArrayList modelUserTasks
+    public ArrayList modelExternalTasks
     public ArrayList modelReceiveTasks
     public ArrayList modelIntermediateCatchEvents
     public ArrayList activityInstanceVariableMapping

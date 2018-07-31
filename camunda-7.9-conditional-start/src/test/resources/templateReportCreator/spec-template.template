@@ -51,29 +51,36 @@
         }
 
         .transaction-boundary {
-            background-color: rgba(255, 30, 30, 1);
+            background-color: rgb(231, 21, 21);
             border-radius: 1px;
-            min-height: 50px;
-            width: 3px;
+            min-height: 20px;
+            width: 5px;
         }
         .user-transaction-boundary {
             background-color: rgba(30, 255, 183, 1);
             border-radius: 1px;
-            min-height: 60px;
+            min-height: 40px;
             width: 3px;
         }
 
         .receivetask-transaction-boundary {
             background-color: rgba(30, 255, 183, 1);
             border-radius: 1px;
-            min-height: 60px;
+            min-height: 40px;
+            width: 3px;
+        }
+
+        .externaltask-transaction-boundary {
+            background-color: rgb(208, 26, 224);
+            border-radius: 1px;
+            min-height: 40px;
             width: 3px;
         }
 
         .intermediatecatchevent-transaction-boundary {
             background-color: rgba(30, 255, 183, 1);
             border-radius: 1px;
-            min-height: 60px;
+            min-height: 40px;
             width: 3px;
         }
 
@@ -123,6 +130,7 @@
                         executedSequenceFlows =[],
                         asyncData =[],
                         receiveTasks =[],
+                        externalTasks =[],
                         intermediateCatchEvents =[],
                         activityInstancesStillActive =[],
                         activityInstanceVariableMapping =[] ->
@@ -149,6 +157,7 @@ function showDiagram_${featureName}() {
     var executedSequenceFlows = ${executedSequenceFlows} 
     var asyncData = ${asyncData}
     var receiveTasks = ${receiveTasks}
+    var externalTasks = ${externalTasks}
     var intermediateCatchEvents = ${intermediateCatchEvents}
     var activityInstancesStillActive = ${activityInstancesStillActive}
     var activityInstanceVariableMapping = ${activityInstanceVariableMapping}
@@ -223,6 +232,18 @@ function showDiagram_${featureName}() {
         });
     }
 
+    // ExternalTasks Tasks Boundaries
+    for (var i = 0; i < externalTasks.length; i++) {
+        var task = externalTasks[i];
+        overlays.add(task, 'note', {
+        position: {
+            bottom: 40,
+            left: -4
+        },
+        html: '<div class="externaltask-transaction-boundary"></div>'
+        });
+    }
+
     // Intermediate Catch Events Boundaries
     for (var i = 0; i < intermediateCatchEvents.length; i++) {
         var event = intermediateCatchEvents[i];
@@ -240,7 +261,7 @@ function showDiagram_${featureName}() {
         var item = asyncData[i];
         // asyncBefore
         if (item.asyncBefore === true){
-            overlays.add(task, 'note', {
+            overlays.add(item['id'], 'note', {
             position: {
                 bottom: 40,
                 left: -4
@@ -250,7 +271,7 @@ function showDiagram_${featureName}() {
         }
         // AsyncAfter
         if (item.asyncAfter === true){
-            overlays.add(task, 'note', {
+            overlays.add(item['id'], 'note', {
             position: {
                 bottom: 40,
                 right: -1
@@ -500,6 +521,7 @@ showDiagram_${featureName}();
                     groovy.json.JsonOutput.toJson(it.sequenceFlowsFinished),
                     groovy.json.JsonOutput.toJson(it.modelAsyncData),
                     groovy.json.JsonOutput.toJson(it.modelReceiveTasks),
+                    groovy.json.JsonOutput.toJson(it.modelExternalTasks),
                     groovy.json.JsonOutput.toJson(it.modelIntermediateCatchEvents),
                     groovy.json.JsonOutput.toJson(it.activityInstancesUnfinished),
                     groovy.json.JsonOutput.toJson(it.activityInstanceVariableMapping)
@@ -524,6 +546,7 @@ showDiagram_${featureName}();
                         groovy.json.JsonOutput.toJson(it.sequenceFlowsFinished),
                         groovy.json.JsonOutput.toJson(it.modelAsyncData),
                         groovy.json.JsonOutput.toJson(it.modelReceiveTasks),
+                        groovy.json.JsonOutput.toJson(it.modelExternalTasks),
                         groovy.json.JsonOutput.toJson(it.modelIntermediateCatchEvents),
                         groovy.json.JsonOutput.toJson(it.activityInstancesUnfinished),
                         groovy.json.JsonOutput.toJson(it.activityInstanceVariableMapping)
